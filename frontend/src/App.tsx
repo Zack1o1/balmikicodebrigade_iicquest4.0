@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
+import ServiceDirectory from './pages/ServiceDirectory';
+import ApplyNow from './pages/Apply/ApplyNow';
+import EsewaMock from './pages/Apply/EsewaMock';
 
 const App = () => {
   return (
@@ -12,6 +15,9 @@ const App = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/services" element={<ServiceDirectory />} />
+            <Route path="/apply/:id" element={<ApplyNow />} />
+            <Route path="/esewa-mock" element={<EsewaMock />} />
             <Route path="*" element={<LandingPage />} />
           </Routes>
         </main>

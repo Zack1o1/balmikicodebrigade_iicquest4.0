@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import {ArrowRight, Bot, Search, BarChart3, Clock, Users, Building, ShieldCheck, Zap, User, CheckCircle2
 } from 'lucide-react';
@@ -8,25 +8,11 @@ import {ArrowRight, Bot, Search, BarChart3, Clock, Users, Building, ShieldCheck,
 const LandingPage = () => {
 
 
-  const [stats, setStats] = useState({
-    municipalities: 0,
-    applications: 0,
-    satisfaction: 0,
-  });
-
-  
-  // useEffect(() => {
-  //   const fetchStats = async () => {
-  //     try {
-  //       const data = await getStats();
-  //       setStats(data);
-  //     } catch (err) {
-  //       console.error("Stats fetch error:", err);
-  //     }
-  //   };
-
-  //   fetchStats();
-  // }, []);
+  const stats = {
+    municipalities: 50,
+    applications: 200000,
+    satisfaction: 92,
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
