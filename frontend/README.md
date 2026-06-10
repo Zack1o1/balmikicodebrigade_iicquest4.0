@@ -1,75 +1,25 @@
-# React + TypeScript + Vite
+﻿
+# Smart Palika - AI-Powered Citizen Services for Nepal's Municipalities
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered citizen service platform for Nepal's Ward Offices and Municipalities. Smart Palika helps citizens understand government service requirements, submit applications, check document requisites, track applications, and gives ward staff and municipality administrators modern dashboards to manage citizen services.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Smart Palika bridges the gap between local municipalities and citizens through a clean, modern SaaS-like design. It avoids the clunky legacy interfaces of traditional government portals and provides an accessible, mobile-first, and highly intuitive experience.
 
-## React Compiler
+### Key Features Built So Far
+- **Modern Governor-Tech Landing Page**: A beautifully designed Hero section showcasing statistics, a mock AI Chat OS window, and feature grids highlighting core citizen services.
+- **Custom UI / Design System**: Configured with responsive React + Tailwind CSS utilizing the official Nepal Government branding colors (`#C8102E` primary red, `#003893` primary blue).
+- **Navigation & Routing**: Clean navigation bar with `react-router-dom` handling links across the platform.
+- **Component Structure**: `vite` development environment correctly setup with a modular React structure.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Tech Stack
+- **Frontend Framework**: React 19
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS v4
+- **Icons**: Lucide React
+- **Routing**: React Router
 
-Note: This will impact Vite dev & build performances.
+# balmiki_iicquest4.0
+To connect frontend and backend we used axios.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
