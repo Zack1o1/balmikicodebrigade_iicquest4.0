@@ -30,9 +30,9 @@ export default function TrackApplication() {
     return STATUS_COLORS[status as keyof typeof STATUS_COLORS] || "bg-gray-100 text-gray-700";
   };
 
-  const isStepActive = (currentStatus: string, stepStatuses: string[]) => {
-    return stepStatuses.includes(currentStatus);
-  };
+  // const isStepActive = (currentStatus: string, stepStatuses: string[]) => {
+  //   return stepStatuses.includes(currentStatus);
+  // };
 
   return (
     <div className="min-h-screen bg-slate-50">

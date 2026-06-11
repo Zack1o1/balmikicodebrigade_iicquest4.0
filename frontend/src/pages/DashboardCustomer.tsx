@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { FileText, Search, Clock, ArrowRight, Bell, Upload, Eye, CheckCircle, AlertCircle, X, Download } from 'lucide-react';
+import { FileText, Search, Clock, ArrowRight, Bell, Upload, Eye, CheckCircle, AlertCircle, X } from 'lucide-react';
 import type { RootState } from '../store';
 import { sanitize } from '../utils/sanitize';
 import { getMyApplications, uploadRequestedDocument } from '../api/applicationApi';
@@ -78,9 +78,9 @@ export default function DashboardCustomer() {
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  const pendingDocRequests = applications.filter(
-    app => app.requestedDocuments?.some(doc => doc.status === 'PENDING')
-  );
+  // const pendingDocRequests = applications.filter(
+  //   app => app.requestedDocuments?.some(doc => doc.status === 'PENDING')
+  // );
 
   const allPendingDocRequests = applications.flatMap(app =>
     (app.requestedDocuments || [])

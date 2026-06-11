@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { FileText, Clock, CheckCircle, TrendingUp, Search, Filter, Eye, XCircle, AlertCircle, Loader2, Activity as ActivityIcon } from 'lucide-react';
+import { FileText, Clock, CheckCircle, Search, Filter, Eye, XCircle, AlertCircle, Loader2, Activity as ActivityIcon } from 'lucide-react';
 import type { RootState } from '../store';
 import { sanitize } from '../utils/sanitize';
 import { getAllApplications, approveApplication, rejectApplication, requestMissingDocuments } from '../api/applicationApi';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Building2, Users, FileText, Activity, UserPlus, Trash2, Eye, Search, Filter, Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Building2, Users, FileText, Activity, UserPlus, Trash2, Eye, Search, Filter, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import type { RootState } from '../store';
 import { sanitize } from '../utils/sanitize';
 import { getUsers, createUser, deleteUser } from '../api/userApi';
@@ -39,7 +39,7 @@ export default function DashboardAdmin() {
     phoneNumber: '',
     assignedWard: ''
   });
-
+  activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   const [modal, setModal] = useState<{ open: boolean; title: string; message: string; onConfirm?: () => void; isConfirm?: boolean }>({ open: false, title: '', message: '' });
   const [viewApp, setViewApp] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);

@@ -115,8 +115,9 @@ const InputField = ({
   </div>
 );
 
-export default function ApplicationSubmission({ onNext, service }: Props) {
+export default function ApplicationSubmission({ onNext }: Props) {
   // Load persisted data from sessionStorage
+  
   const [nameEn, setNameEn] = useState(() => sessionStorage.getItem(`${STORAGE_KEY}_nameEn`) || '');
   const [nameNp, setNameNp] = useState(() => sessionStorage.getItem(`${STORAGE_KEY}_nameNp`) || '');
   const [dob, setDob] = useState(() => sessionStorage.getItem(`${STORAGE_KEY}_dob`) || '');
