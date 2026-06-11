@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Building2, Users, FileText, Activity, UserPlus, Trash2, Eye, Search, Filter, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Building2, Users, FileText, Activity, UserPlus, Trash2, Eye, Search, Filter, Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
 import type { RootState } from '../store';
 import { sanitize } from '../utils/sanitize';
 import { getUsers, createUser, deleteUser } from '../api/userApi';
 import { getAllApplications, approveApplication, rejectApplication } from '../api/applicationApi';
+import { getAllActivities } from '../api/activityApi';
 import ApplicationDetailModal from '../components/ApplicationDetailModal';
 
 function Modal({ open, title, message, onClose, children }: { open: boolean; title: string; message?: string; onClose: () => void; children?: React.ReactNode }) {
@@ -25,6 +26,7 @@ export default function DashboardAdmin() {
 
   const [staffList, setStaffList] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -40,6 +42,7 @@ export default function DashboardAdmin() {
 
   const [modal, setModal] = useState<{ open: boolean; title: string; message: string; onConfirm?: () => void; isConfirm?: boolean }>({ open: false, title: '', message: '' });
   const [viewApp, setViewApp] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const fetchStaff = async () => {
     try {
@@ -59,9 +62,19 @@ export default function DashboardAdmin() {
     }
   };
 
+  const fetchActivities = async () => {
+    try {
+      const data = await getAllActivities();
+      setActivities(data);
+    } catch (err) {
+      console.error("Error fetching activities:", err);
+    }
+  };
+
   useEffect(() => {
     fetchStaff();
     fetchApps();
+    fetchActivities();
   }, []);
 
   const handleCreateStaff = async (e: React.FormEvent) => {
@@ -103,20 +116,26 @@ export default function DashboardAdmin() {
   };
 
   const handleApprove = async (id: string) => {
+    setActionLoading(id);
     try {
       await approveApplication(id);
       fetchApps();
     } catch (err) {
       console.error(err);
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const handleReject = async (id: string) => {
+    setActionLoading(id);
     try {
       await rejectApplication(id);
       fetchApps();
     } catch (err) {
       console.error(err);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -127,7 +146,7 @@ export default function DashboardAdmin() {
       app.applicant?.firstName?.toLowerCase().includes(searchTerm.toLowerCase());
 
     if (statusFilter === 'all') return matchesSearch;
-    if (statusFilter === 'pending') return matchesSearch && app.status === 'PENDING';
+    if (statusFilter === 'pending') return matchesSearch && ['PENDING', 'DOCUMENT_REQUESTED', 'UNDER_REVIEW'].includes(app.status);
     return matchesSearch && app.status === statusFilter;
   });
 
@@ -291,10 +310,11 @@ export default function DashboardAdmin() {
                     className="pl-9 pr-8 py-2 border border-slate-200 rounded-xl text-sm bg-white text-slate-600 focus:outline-none appearance-none cursor-pointer hover:bg-slate-50 transition-colors"
                   >
                     <option value="all">All Statuses</option>
-                    <option value="pending">Pending</option>
+                    <option value="pending">Active</option>
                     <option value="APPROVED">Approved</option>
                     <option value="REJECTED">Rejected</option>
                     <option value="DOCUMENT_REQUESTED">Document Requested</option>
+                    <option value="UNDER_REVIEW">Under Review</option>
                   </select>
                 </div>
               </div>
@@ -319,6 +339,7 @@ export default function DashboardAdmin() {
                       APPROVED: 'text-green-700 bg-green-50 border-green-200',
                       REJECTED: 'text-red-700 bg-red-50 border-red-200',
                       DOCUMENT_REQUESTED: 'text-blue-700 bg-blue-50 border-blue-200',
+                      UNDER_REVIEW: 'text-purple-700 bg-purple-50 border-purple-200',
                     };
 
                     return (
@@ -336,16 +357,22 @@ export default function DashboardAdmin() {
                         </td>
                         <td className="py-4 px-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            {app.status === 'PENDING' && (
-                              <>
-                                <button onClick={() => handleApprove(app._id)} className="inline-flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1.5 rounded-lg hover:bg-green-100 text-xs font-semibold">
-                                  <CheckCircle size={14} /> Approve
-                                </button>
-                                <button onClick={() => handleReject(app._id)} className="inline-flex items-center gap-1 text-red-700 bg-red-50 px-2 py-1.5 rounded-lg hover:bg-red-100 text-xs font-semibold">
-                                  <XCircle size={14} /> Reject
-                                </button>
-                              </>
-                            )}
+                            <button
+                              onClick={() => handleApprove(app._id)}
+                              disabled={actionLoading === app._id}
+                              className="inline-flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1.5 rounded-lg hover:bg-green-100 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {actionLoading === app._id ? <Loader2 className="animate-spin" size={14} /> : <CheckCircle size={14} />}
+                              {actionLoading === app._id ? 'Processing...' : 'Approve'}
+                            </button>
+                            <button
+                              onClick={() => handleReject(app._id)}
+                              disabled={actionLoading === app._id}
+                              className="inline-flex items-center gap-1 text-red-700 bg-red-50 px-2 py-1.5 rounded-lg hover:bg-red-100 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {actionLoading === app._id ? <Loader2 className="animate-spin" size={14} /> : <XCircle size={14} />}
+                              {actionLoading === app._id ? 'Processing...' : 'Reject'}
+                            </button>
                             <button
                               onClick={() => setViewApp(app._id)}
                               className="inline-flex items-center gap-1.5 text-indigo-600 font-semibold bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors"
@@ -372,8 +399,9 @@ export default function DashboardAdmin() {
         appId={viewApp || ''}
         onClose={() => setViewApp(null)}
         role="admin"
-        onApprove={async (id) => { await approveApplication(id); fetchApps(); setViewApp(null); }}
-        onReject={async (id) => { await rejectApplication(id); fetchApps(); setViewApp(null); }}
+        onApprove={async (id) => { setActionLoading(id); try { await approveApplication(id); fetchApps(); setViewApp(null); } finally { setActionLoading(null); } }}
+        onReject={async (id) => { setActionLoading(id); try { await rejectApplication(id); fetchApps(); setViewApp(null); } finally { setActionLoading(null); } }}
+        disabled={actionLoading !== null}
       />
     </div>
   );

@@ -13,6 +13,8 @@ const {
   approveApplication,
   rejectApplication,
   requestDocuments,
+  uploadRequestedDocuments,
+  uploadAdditionalDocuments,
 } = require("../../controllers/applicationController");
 
 router.post("/", authMiddleware, createApplication);
@@ -24,5 +26,7 @@ router.put("/:id/status", authMiddleware, updateStatus);
 router.put("/:id/approve", authMiddleware, roleMiddleware("admin", "ward"), approveApplication);
 router.put("/:id/reject", authMiddleware, roleMiddleware("admin", "ward"), rejectApplication);
 router.put("/:id/request-documents", authMiddleware, roleMiddleware("admin", "ward"), requestDocuments);
+router.put("/:id/upload-requested-document", authMiddleware, uploadRequestedDocuments);
+router.put("/:id/upload-additional", authMiddleware, uploadAdditionalDocuments);
 
 module.exports = router;

@@ -81,6 +81,26 @@ PUT /applications/:id/request-documents
 ```
 Body: `{ missingDocs: string[], note? }`
 
+### Upload Requested Document (citizen)
+```
+PUT /applications/:id/upload-requested-document
+```
+Body: `{ documentName: string, fileUrl: string }`
+
+### Upload Additional Documents (citizen)
+```
+PUT /applications/:id/upload-additional
+```
+Body: `{ documents: { name: string, fileUrl: string }[] }`
+
+### File Upload
+```
+POST /upload
+```
+Content-Type: `multipart/form-data`
+Field: `file` (PNG, JPG, JPEG only, max 5MB)
+Response: `{ success: true, fileUrl, filename, originalName, size }`
+
 ---
 
 ## Users
@@ -183,6 +203,7 @@ Body: `{ message }`
 | APPROVED | Application has been approved |
 | REJECTED | Application has been rejected |
 | DOCUMENT_REQUESTED | Staff requested additional documents |
+| UNDER_REVIEW | Application is back under review after document upload |
 
 ## Default Admin Account
 - Email: `admin@smartpalika.com`

@@ -18,7 +18,9 @@ const serviceRoutes = require("./routes/v1/serviceRoutes");
 const applicationRoutes = require("./routes/v1/applicationRoutes");
 const dashboardRoutes = require("./routes/v1/dashboardRoutes");
 const notificationRoutes = require("./routes/v1/notificationRoutes");
+const activityRoutes = require("./routes/v1/activityRoutes");
 const aiRoutes = require("./routes/v1/aiRoutes");
+const uploadRoutes = require("./routes/v1/uploadRoutes");
 
 // =======================
 // MIDDLEWARE
@@ -30,7 +32,11 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// Serve uploaded files statically
+app.use("/uploads", express.static("uploads"));
 
 // =======================
 // ROUTES
@@ -41,8 +47,9 @@ app.use("/api/v1/services", serviceRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/activities", activityRoutes);
 app.use("/api/v1/ai", aiRoutes);
-
+app.use("/api/v1/upload", uploadRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({
@@ -50,7 +57,6 @@ app.get("/api/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-
 
 async function start() {
   try {

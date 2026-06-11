@@ -44,3 +44,13 @@ export const requestMissingDocuments = async (id: string, missingDocs: string[],
   const res = await api.put(`/applications/${id}/request-documents`, { missingDocs, note });
   return res.data;
 };
+
+export const uploadRequestedDocument = async (id: string, documentName: string, fileUrl: string) => {
+  const res = await api.put(`/applications/${id}/upload-requested-document`, { documentName, fileUrl });
+  return res.data;
+};
+
+export const uploadAdditionalDocuments = async (id: string, documents: { name: string; fileUrl: string }[]) => {
+  const res = await api.put(`/applications/${id}/upload-additional`, { documents });
+  return res.data;
+};

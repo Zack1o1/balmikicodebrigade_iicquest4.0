@@ -26,6 +26,7 @@ const applicationSchema = new mongoose.Schema(
         "APPROVED",
         "REJECTED",
         "DOCUMENT_REQUESTED",
+        "UNDER_REVIEW",
       ],
       default: "PENDING",
     },
@@ -50,12 +51,46 @@ const applicationSchema = new mongoose.Schema(
     documents: [
       {
         name: String,
-
         fileUrl: String,
-
+        uploadedAt: {
+          type: Date,
+          default: Date.now,
+        },
         verified: {
           type: Boolean,
           default: false,
+        },
+      },
+    ],
+
+    requestedDocuments: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        remarks: String,
+        requestedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        fileUrl: String,
+        uploadedAt: Date,
+        status: {
+          type: String,
+          enum: ["PENDING", "UPLOADED"],
+          default: "PENDING",
+        },
+      },
+    ],
+
+    additionalDocuments: [
+      {
+        name: String,
+        fileUrl: String,
+        uploadedAt: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],

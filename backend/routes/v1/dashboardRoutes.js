@@ -27,7 +27,7 @@ router.get(
       const pending = await Application.countDocuments({
         applicant: userId,
         status: {
-          $in: ["PENDING", "DOCUMENT_REQUESTED"],
+          $in: ["PENDING", "DOCUMENT_REQUESTED", "UNDER_REVIEW"],
         },
       });
 
@@ -63,7 +63,7 @@ router.get(
       const approvedApplications = await Application.countDocuments({ ...filter, status: "APPROVED" });
       const pendingApplications = await Application.countDocuments({
         ...filter,
-        status: { $in: ["PENDING", "DOCUMENT_REQUESTED"] }
+        status: { $in: ["PENDING", "DOCUMENT_REQUESTED", "UNDER_REVIEW"] }
       });
       const totalStaff = await User.countDocuments({ role: "ward", assignedWard: wardNo });
 
@@ -88,7 +88,7 @@ router.get(
       const totalApplications = await Application.countDocuments();
       const approvedApplications = await Application.countDocuments({ status: "APPROVED" });
       const pendingApplications = await Application.countDocuments({
-        status: { $in: ["PENDING", "DOCUMENT_REQUESTED"] }
+        status: { $in: ["PENDING", "DOCUMENT_REQUESTED", "UNDER_REVIEW"] }
       });
 
       const totalWards = 32;

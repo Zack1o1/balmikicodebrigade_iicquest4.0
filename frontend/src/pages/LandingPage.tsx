@@ -24,7 +24,7 @@ export function LandingPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-white/10 border border-white/20">
-                <Zap className="w-3.5 h-3.5 text-yellow-300" />
+                <Zap className="w-3.5 h-3.5 text-red-300" />
                 <span className="text-white text-xs font-medium">AI-Powered Government Services</span>
               </div>
               <h1 className="font-heading font-extrabold text-white leading-tight mb-5 text-[clamp(2rem,4vw,3.25rem)]">

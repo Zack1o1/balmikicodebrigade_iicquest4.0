@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
-import { X, FileText, Download, CheckCircle, XCircle, AlertCircle, Calendar, User, Hash, Clock } from 'lucide-react';
+import { X, FileText, Download, CheckCircle, XCircle, AlertCircle, Calendar, User, Hash, Clock, Eye, Loader2, Upload } from 'lucide-react';
 import { getApplication } from '../api/applicationApi';
 import { STATUS_LABELS } from '../constants/applicationStatus';
+import { getServiceName } from '../utils/serviceLookup';
 
 interface ApplicationData {
   _id: string;
   applicationId: string;
-  applicant?: { firstName: string; lastName: string; email: string; phoneNumber: string };
+  applicant?: { firstName: string; lastName: string; email: string; phoneNumber: string; address?: string };
   service: string;
   status: string;
   createdAt: string;
   documents?: { name: string; fileUrl?: string; uploadedAt?: string }[];
+  requestedDocuments?: { name: string; remarks?: string; requestedAt: string; status: string; fileUrl?: string; uploadedAt?: string }[];
+  additionalDocuments?: { name: string; fileUrl?: string; uploadedAt?: string }[];
   assignedWard?: number;
   remarks?: string;
   expectedCompletionDate?: string;
@@ -25,9 +28,51 @@ interface Props {
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
   onRequestDocs?: (id: string) => void;
+  disabled?: boolean;
 }
 
-export default function ApplicationDetailModal({ open, appId, onClose, role, onApprove, onReject, onRequestDocs }: Props) {
+function DocumentCard({ doc, label }: { doc: { name: string; fileUrl?: string; uploadedAt?: string }; label?: string }) {
+  const isImage = doc.fileUrl && (doc.fileUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) || doc.fileUrl.startsWith('data:image'));
+
+  return (
+    <div className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-3 border border-slate-100 hover:border-slate-200 transition-colors">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        {isImage ? (
+          <div className="w-10 h-10 rounded-lg overflow-hidden bg-white border shrink-0">
+            <img src={doc.fileUrl} alt={doc.name} className="w-full h-full object-cover" />
+          </div>
+        ) : (
+          <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+            <FileText size={18} className="text-blue-500" />
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-slate-800 truncate">{doc.name}</p>
+          {doc.uploadedAt && (
+            <p className="text-xs text-slate-400">
+              Uploaded: {new Date(doc.uploadedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </p>
+          )}
+          {label && <span className="text-xs text-primary-blue font-medium">{label}</span>}
+        </div>
+      </div>
+      {doc.fileUrl && (
+        <div className="flex gap-2 shrink-0 ml-3">
+          <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+            <Eye size={14} /> Preview
+          </a>
+          <a href={doc.fileUrl} download
+            className="flex items-center gap-1 text-xs bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+            <Download size={14} /> Download
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function ApplicationDetailModal({ open, appId, onClose, role, onApprove, onReject, onRequestDocs, disabled }: Props) {
   const [application, setApplication] = useState<ApplicationData | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -48,11 +93,12 @@ export default function ApplicationDetailModal({ open, appId, onClose, role, onA
     APPROVED: 'bg-green-100 text-green-700 border-green-200',
     REJECTED: 'bg-red-100 text-red-700 border-red-200',
     DOCUMENT_REQUESTED: 'bg-blue-100 text-blue-700 border-blue-200',
+    UNDER_REVIEW: 'bg-purple-100 text-purple-700 border-purple-200',
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10 rounded-t-2xl">
           <h3 className="text-lg font-bold text-gray-900">Application Details</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -66,26 +112,25 @@ export default function ApplicationDetailModal({ open, appId, onClose, role, onA
           <div className="p-12 text-center text-gray-400">Failed to load application details.</div>
         ) : (
           <div className="p-6 space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+            {/* Header Info */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-slate-50 rounded-xl p-4">
                 <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
                   <Hash size={14} /> Application ID
                 </div>
-                <p className="font-semibold text-slate-900">{application.applicationId}</p>
+                <p className="font-semibold text-slate-900 text-sm">{application.applicationId}</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-4">
                 <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                  <User size={14} /> Applicant
+                  <FileText size={14} /> Service
                 </div>
-                <p className="font-semibold text-slate-900">
-                  {application.applicant?.firstName} {application.applicant?.lastName}
-                </p>
+                <p className="font-semibold text-slate-900 text-sm">{getServiceName(application.service)}</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-4">
                 <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
                   <Calendar size={14} /> Submission Date
                 </div>
-                <p className="font-semibold text-slate-900">
+                <p className="font-semibold text-slate-900 text-sm">
                   {new Date(application.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric', month: 'short', day: 'numeric'
                   })}
@@ -101,50 +146,144 @@ export default function ApplicationDetailModal({ open, appId, onClose, role, onA
               </div>
             </div>
 
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <FileText size={18} /> Uploaded Documents
-              </h4>
-              {application.documents && application.documents.length > 0 ? (
+            {/* Applicant Information */}
+            {application.applicant && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <User size={18} /> Applicant Information
+                </h4>
+                <div className="bg-slate-50 rounded-xl p-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-xs text-slate-500">Name</p>
+                    <p className="text-sm font-medium text-slate-800">
+                      {application.applicant.firstName} {application.applicant.lastName}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Email</p>
+                    <p className="text-sm font-medium text-slate-800">{application.applicant.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Phone</p>
+                    <p className="text-sm font-medium text-slate-800">{application.applicant.phoneNumber}</p>
+                  </div>
+                  {application.applicant.address && (
+                    <div>
+                      <p className="text-xs text-slate-500">Address</p>
+                      <p className="text-sm font-medium text-slate-800">{application.applicant.address}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs text-slate-500">Ward</p>
+                    <p className="text-sm font-medium text-slate-800">Ward {application.assignedWard || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Uploaded Documents */}
+            {application.documents && application.documents.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <FileText size={18} /> Uploaded Documents
+                </h4>
                 <div className="space-y-2">
                   {application.documents.map((doc, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-3 border border-slate-100">
-                      <div className="flex items-center gap-3">
-                        <FileText size={16} className="text-slate-400" />
-                        <div>
-                          <p className="text-sm font-medium text-slate-800">{doc.name}</p>
-                          {doc.uploadedAt && (
-                            <p className="text-xs text-slate-400">{new Date(doc.uploadedAt).toLocaleDateString()}</p>
+                    <DocumentCard key={idx} doc={doc} label="Initial Upload" />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Requested Documents */}
+            {application.requestedDocuments && application.requestedDocuments.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <AlertCircle size={18} className="text-yellow-500" /> Requested Documents
+                </h4>
+                <div className="space-y-2">
+                  {application.requestedDocuments.map((doc, idx) => (
+                    <div key={idx} className={`flex items-center justify-between rounded-lg px-4 py-3 border ${
+                      doc.status === 'UPLOADED' ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
+                    }`}>
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                          doc.status === 'UPLOADED' ? 'bg-green-100' : 'bg-yellow-100'
+                        }`}>
+                          {doc.status === 'UPLOADED' ? (
+                            <CheckCircle size={18} className="text-green-600" />
+                          ) : (
+                            <AlertCircle size={18} className="text-yellow-600" />
                           )}
                         </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-slate-800">{doc.name}</p>
+                          {doc.remarks && <p className="text-xs text-slate-500">Remarks: {doc.remarks}</p>}
+                          <p className="text-xs text-slate-400">
+                            Requested: {new Date(doc.requestedAt).toLocaleDateString()}
+                            {doc.uploadedAt && ` | Uploaded: ${new Date(doc.uploadedAt).toLocaleDateString()}`}
+                          </p>
+                        </div>
                       </div>
+                      <span className={`text-xs font-semibold px-2 py-1 rounded ${
+                        doc.status === 'UPLOADED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {doc.status}
+                      </span>
                       {doc.fileUrl && (
-                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">
-                          <Download size={14} /> Download
-                        </a>
+                        <div className="flex gap-2 ml-3">
+                          <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs bg-white border px-3 py-1.5 rounded-lg hover:bg-slate-50">
+                            <Eye size={14} /> View
+                          </a>
+                        </div>
                       )}
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-sm text-slate-400 bg-slate-50 rounded-lg p-4 text-center">No documents uploaded yet.</p>
-              )}
-            </div>
+              </div>
+            )}
 
+            {application.additionalDocuments && application.additionalDocuments.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Upload size={18} className="text-purple-500" /> 
+                </h4>
+                <div className="space-y-2">
+                  {application.additionalDocuments.map((doc, idx) => (
+                    <DocumentCard key={idx} doc={doc} label="Additional" />
+                  ))}
+                </div>
+              </div>
+            )}
+
+  
             {application.timeline && application.timeline.length > 0 && (
               <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Timeline</h4>
-                <div className="space-y-2">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Clock size={18} /> Application Timeline
+                </h4>
+                <div className="space-y-3">
                   {application.timeline.map((event, idx) => (
                     <div key={idx} className="flex gap-3 items-start">
-                      <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 shrink-0" />
-                      <div>
+                      <div className="flex flex-col items-center">
+                        <div className={`w-3 h-3 rounded-full ${
+                         idx === application.timeline?.length! - 1 ? 'bg-blue-500 ring-2 ring-blue-200' : 'bg-gray-300'
+                        }`} />
+                        {idx < application.timeline!.length - 1 && (
+                          <div className="w-0.5 h-full bg-gray-200 mt-1" />
+                        )}
+                      </div>
+                      <div className="pb-4">
                         <p className="text-sm font-medium text-slate-800">
                           {STATUS_LABELS[event.status as keyof typeof STATUS_LABELS] || event.status}
                         </p>
                         <p className="text-xs text-slate-500">{event.note}</p>
-                        <p className="text-xs text-slate-400">{new Date(event.timestamp).toLocaleString()}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {new Date(event.timestamp).toLocaleString('en-US', {
+                            month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                          })}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -152,25 +291,26 @@ export default function ApplicationDetailModal({ open, appId, onClose, role, onA
               </div>
             )}
 
-            {role && (role === 'admin' || role === 'ward') && application.status === 'PENDING' && (
+            {/* Actions */}
+            {role && (role === 'admin' || role === 'ward') && (
               <div className="border-t border-gray-100 pt-4">
                 <h4 className="font-semibold text-gray-900 mb-3">Actions</h4>
                 <div className="flex flex-wrap gap-3">
                   {onApprove && (
-                    <button onClick={() => onApprove(appId)}
-                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors">
-                      <CheckCircle size={16} /> Approve
+                    <button onClick={() => onApprove(appId)} disabled={disabled}
+                      className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                      {disabled ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />} {disabled ? 'Processing...' : 'Approve'}
                     </button>
                   )}
                   {onReject && (
-                    <button onClick={() => onReject(appId)}
-                      className="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">
-                      <XCircle size={16} /> Reject
+                    <button onClick={() => onReject(appId)} disabled={disabled}
+                      className="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                      {disabled ? <Loader2 className="animate-spin" size={16} /> : <XCircle size={16} />} {disabled ? 'Processing...' : 'Reject'}
                     </button>
                   )}
                   {onRequestDocs && (
-                    <button onClick={() => onRequestDocs(appId)}
-                      className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
+                    <button onClick={() => onRequestDocs(appId)} disabled={disabled}
+                      className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                       <AlertCircle size={16} /> Request Documents
                     </button>
                   )}

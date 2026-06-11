@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { FileText, Clock, CheckCircle, TrendingUp, Search, Filter, Eye, XCircle, AlertCircle } from 'lucide-react';
+import { FileText, Clock, CheckCircle, TrendingUp, Search, Filter, Eye, XCircle, AlertCircle, Loader2, Activity as ActivityIcon } from 'lucide-react';
 import type { RootState } from '../store';
 import { sanitize } from '../utils/sanitize';
 import { getAllApplications, approveApplication, rejectApplication, requestMissingDocuments } from '../api/applicationApi';
+import { getAllActivities } from '../api/activityApi';
 import { getServiceName } from '../utils/serviceLookup';
 import { STATUS_LABELS, STATUS_COLORS } from '../constants/applicationStatus';
 import ApplicationDetailModal from '../components/ApplicationDetailModal';
@@ -24,48 +25,62 @@ function Modal({ open, title, message, onClose, children }: { open: boolean; tit
 export default function DashboardStaff() {
   const { user } = useSelector((state: RootState) => state.auth);
   const [applications, setApplications] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
   const [viewApp, setViewApp] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [docsModal, setDocsModal] = useState<{ open: boolean; appId: string }>({ open: false, appId: '' });
   const [docInput, setDocInput] = useState('');
   const [docList, setDocList] = useState<string[]>([]);
   const [submittingDocs, setSubmittingDocs] = useState(false);
 
   useEffect(() => {
-    const fetchApps = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getAllApplications();
-        setApplications(data);
+        const [apps, acts] = await Promise.all([
+          getAllApplications(),
+          getAllActivities(),
+        ]);
+        setApplications(apps || []);
+        setActivities(acts || []);
       } catch (err) {
         console.error(err);
       }
     };
-    fetchApps();
+    fetchData();
   }, []);
 
-  const pendingCount = applications.filter(a => ['PENDING', 'DOCUMENT_REQUESTED'].includes(a.status)).length;
+  const pendingCount = applications.filter(a => ['PENDING', 'DOCUMENT_REQUESTED', 'UNDER_REVIEW'].includes(a.status)).length;
   const approvedCount = applications.filter(a => a.status === 'APPROVED').length;
   const totalCount = applications.length;
 
   const handleApprove = async (id: string) => {
+    setActionLoading(id);
     try {
       await approveApplication(id);
-      const data = await getAllApplications();
-      setApplications(data);
+      const [apps, acts] = await Promise.all([getAllApplications(), getAllActivities()]);
+      setApplications(apps);
+      setActivities(acts);
     } catch (err) {
       console.error(err);
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const handleReject = async (id: string) => {
+    setActionLoading(id);
     try {
       await rejectApplication(id);
-      const data = await getAllApplications();
-      setApplications(data);
+      const [apps, acts] = await Promise.all([getAllApplications(), getAllActivities()]);
+      setApplications(apps);
+      setActivities(acts);
     } catch (err) {
       console.error(err);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -92,8 +107,9 @@ export default function DashboardStaff() {
     try {
       await requestMissingDocuments(docsModal.appId, docList);
       setDocsModal({ open: false, appId: '' });
-      const data = await getAllApplications();
-      setApplications(data);
+      const [apps, acts] = await Promise.all([getAllApplications(), getAllActivities()]);
+      setApplications(apps);
+      setActivities(acts);
     } catch (err) {
       console.error(err);
     } finally {
@@ -113,7 +129,7 @@ export default function DashboardStaff() {
       app.applicant?.lastName?.toLowerCase().includes(searchTerm.toLowerCase());
 
     if (statusFilter === 'all') return matchesSearch;
-    if (statusFilter === 'pending') return matchesSearch && ['PENDING', 'DOCUMENT_REQUESTED'].includes(app.status);
+    if (statusFilter === 'pending') return matchesSearch && ['PENDING', 'DOCUMENT_REQUESTED', 'UNDER_REVIEW'].includes(app.status);
     if (statusFilter === 'approved') return matchesSearch && app.status === 'APPROVED';
     return matchesSearch && app.status === statusFilter;
   });
@@ -188,7 +204,7 @@ export default function DashboardStaff() {
               </div>
               <div className="mt-4">
                 <div className="text-3xl font-bold text-gray-900">{pendingCount}</div>
-                <div className="text-sm text-gray-500 mt-1">Pending</div>
+                <div className="text-sm text-gray-500 mt-1">Active</div>
               </div>
             </div>
 
@@ -205,14 +221,39 @@ export default function DashboardStaff() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
               <div className="flex justify-between items-start">
-                <div className="p-3 bg-red-50 rounded-lg"><TrendingUp className="text-red-500" size={20} /></div>
-                <span className="text-sm font-semibold text-red-600 bg-red-50 px-2 py-1 rounded">-0.3d</span>
+                <div className="p-3 bg-purple-50 rounded-lg"><ActivityIcon className="text-purple-600" size={20} /></div>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-bold text-gray-900">1.8d</div>
-                <div className="text-sm text-gray-500 mt-1">Avg. Processing</div>
+                <div className="text-3xl font-bold text-gray-900">{activities.length}</div>
+                <div className="text-sm text-gray-500 mt-1">Activities</div>
               </div>
             </div>
+          </div>
+
+          {/* Staff Activities */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <ActivityIcon size={20} className="text-purple-500" /> Recent Activity
+            </h2>
+            {activities.length === 0 ? (
+              <div className="text-center py-6 text-gray-400">No recent activities.</div>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {activities.slice(0, 10).map((act: any) => (
+                  <div key={act._id} className="flex items-start gap-3 p-2 bg-gray-50 rounded-lg text-sm">
+                    <div className="mt-0.5 w-2 h-2 rounded-full bg-purple-400 shrink-0" />
+                    <div>
+                      <p className="text-gray-700">{act.description}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {new Date(act.createdAt).toLocaleDateString('en-US', {
+                          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
@@ -237,87 +278,98 @@ export default function DashboardStaff() {
                       className="pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-600 focus:outline-none appearance-none cursor-pointer"
                     >
                       <option value="all">All Statuses</option>
-                      <option value="pending">Pending</option>
+                      <option value="pending">Active</option>
                       <option value="APPROVED">Approved</option>
                       <option value="REJECTED">Rejected</option>
                       <option value="DOCUMENT_REQUESTED">Document Requested</option>
+                      <option value="UNDER_REVIEW">Under Review</option>
                     </select>
                   </div>
                 </div>
              </div>
              
              <div className="overflow-x-auto">
-               <table className="w-full text-left border-collapse">
-                 <thead>
-                   <tr className="border-b border-gray-100 text-gray-500 text-xs font-semibold tracking-wider">
-                     <th className="pb-3 px-4 uppercase">App. ID</th>
-                     <th className="pb-3 px-4 uppercase">Service</th>
-                     <th className="pb-3 px-4 uppercase">Applicant</th>
-                     <th className="pb-3 px-4 uppercase">Ward</th>
-                     <th className="pb-3 px-4 uppercase">Date</th>
-                     <th className="pb-3 px-4 uppercase">Status</th>
-                     <th className="pb-3 px-4 uppercase text-right">Action</th>
-                   </tr>
-                 </thead>
-                 <tbody className="text-sm">
-                   {filteredApplications.map((app) => (
-                     <tr key={app._id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
-                       <td className="py-4 px-4 font-semibold text-primary-blue">{app.applicationId}</td>
-                       <td className="py-4 px-4 text-gray-800">{getServiceName(app.service)}</td>
-                       <td className="py-4 px-4">
-                         <div className="flex items-center gap-3">
-                           <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
-                             {app.applicant?.firstName?.charAt(0)}{app.applicant?.lastName?.charAt(0)}
-                           </div>
-                           <span className="font-medium text-gray-700 whitespace-nowrap">
-                             {sanitize(app.applicant?.firstName || '')} {sanitize(app.applicant?.lastName || '')}
-                           </span>
-                         </div>
-                       </td>
-                       <td className="py-4 px-4 text-gray-600 whitespace-nowrap">Ward {app.assignedWard || '0'}</td>
-                       <td className="py-4 px-4 text-gray-600 whitespace-nowrap">
-                         {new Date(app.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                       </td>
-                       <td className="py-4 px-4 whitespace-nowrap">
-                         <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusStyle(app.status)}`}>
-                           {STATUS_LABELS[app.status as keyof typeof STATUS_LABELS] || app.status}
-                         </span>
-                       </td>
-                       <td className="py-4 px-4 text-right">
-                         <div className="flex items-center justify-end gap-2">
-                           {app.status === 'PENDING' && (
-                             <>
-                               <button onClick={() => handleApprove(app._id)} className="inline-flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1.5 rounded-lg hover:bg-green-100 text-xs font-semibold">
-                                 <CheckCircle size={14} /> Approve
-                               </button>
-                               <button onClick={() => handleReject(app._id)} className="inline-flex items-center gap-1 text-red-700 bg-red-50 px-2 py-1.5 rounded-lg hover:bg-red-100 text-xs font-semibold">
-                                 <XCircle size={14} /> Reject
-                               </button>
-                               <button onClick={() => openDocsModal(app._id)} className="inline-flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-1.5 rounded-lg hover:bg-blue-100 text-xs font-semibold">
-                                 <AlertCircle size={14} /> Request Docs
-                               </button>
-                             </>
-                           )}
-                            <button 
-                              onClick={() => setViewApp(app._id)}
-                              className="inline-flex items-center gap-1 text-primary-blue font-semibold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-100 text-gray-500 text-xs font-semibold tracking-wider">
+                      <th className="pb-3 px-4 uppercase">App. ID</th>
+                      <th className="pb-3 px-4 uppercase">Service</th>
+                      <th className="pb-3 px-4 uppercase">Applicant</th>
+                      <th className="pb-3 px-4 uppercase">Ward</th>
+                      <th className="pb-3 px-4 uppercase">Date</th>
+                      <th className="pb-3 px-4 uppercase">Status</th>
+                      <th className="pb-3 px-4 uppercase text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {filteredApplications.map((app) => (
+                      <tr key={app._id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
+                        <td className="py-4 px-4 font-semibold text-primary-blue">{app.applicationId}</td>
+                        <td className="py-4 px-4 text-gray-800">{getServiceName(app.service)}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
+                              {app.applicant?.firstName?.charAt(0)}{app.applicant?.lastName?.charAt(0)}
+                            </div>
+                            <span className="font-medium text-gray-700 whitespace-nowrap">
+                              {sanitize(app.applicant?.firstName || '')} {sanitize(app.applicant?.lastName || '')}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-gray-600 whitespace-nowrap">Ward {app.assignedWard || '0'}</td>
+                        <td className="py-4 px-4 text-gray-600 whitespace-nowrap">
+                          {new Date(app.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </td>
+                        <td className="py-4 px-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusStyle(app.status)}`}>
+                            {STATUS_LABELS[app.status as keyof typeof STATUS_LABELS] || app.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleApprove(app._id)}
+                              disabled={actionLoading === app._id}
+                              className="inline-flex items-center gap-1 text-green-700 bg-green-50 px-2 py-1.5 rounded-lg hover:bg-green-100 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <Eye size={16} /> View
+                              {actionLoading === app._id ? <Loader2 className="animate-spin" size={14} /> : <CheckCircle size={14} />}
+                              {actionLoading === app._id ? 'Processing...' : 'Approve'}
                             </button>
-                         </div>
-                       </td>
-                     </tr>
-                   ))}
-                   {filteredApplications.length === 0 && (
-                     <tr>
-                       <td colSpan={7} className="py-12 text-center text-gray-400 font-medium">
-                         No application records found matching current criteria.
-                       </td>
-                     </tr>
-                   )}
-                 </tbody>
-               </table>
-             </div>
+                            <button
+                              onClick={() => handleReject(app._id)}
+                              disabled={actionLoading === app._id}
+                              className="inline-flex items-center gap-1 text-red-700 bg-red-50 px-2 py-1.5 rounded-lg hover:bg-red-100 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {actionLoading === app._id ? <Loader2 className="animate-spin" size={14} /> : <XCircle size={14} />}
+                              {actionLoading === app._id ? 'Processing...' : 'Reject'}
+                            </button>
+                            <button
+                              onClick={() => openDocsModal(app._id)}
+                              disabled={actionLoading === app._id}
+                              className="inline-flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-1.5 rounded-lg hover:bg-blue-100 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <AlertCircle size={14} /> Request Docs
+                            </button>
+                             <button 
+                               onClick={() => setViewApp(app._id)}
+                               className="inline-flex items-center gap-1 text-primary-blue font-semibold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors"
+                             >
+                               <Eye size={16} /> View
+                             </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredApplications.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center text-gray-400 font-medium">
+                          No application records found matching current criteria.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
           </div>
         </div>
       </div>
@@ -327,9 +379,10 @@ export default function DashboardStaff() {
         appId={viewApp || ''}
         onClose={() => setViewApp(null)}
         role="ward"
-        onApprove={async (id) => { await approveApplication(id); setViewApp(null); }}
-        onReject={async (id) => { await rejectApplication(id); setViewApp(null); }}
-        onRequestDocs={() => setViewApp(null)}
+        onApprove={async (id) => { setActionLoading(id); try { await approveApplication(id); setViewApp(null); const [apps, acts] = await Promise.all([getAllApplications(), getAllActivities()]); setApplications(apps); setActivities(acts); } finally { setActionLoading(null); } }}
+        onReject={async (id) => { setActionLoading(id); try { await rejectApplication(id); setViewApp(null); const [apps, acts] = await Promise.all([getAllApplications(), getAllActivities()]); setApplications(apps); setActivities(acts); } finally { setActionLoading(null); } }}
+        onRequestDocs={() => { setViewApp(null); openDocsModal(viewApp || ''); }}
+        disabled={actionLoading !== null}
       />
     </div>
   );
