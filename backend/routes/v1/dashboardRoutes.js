@@ -21,20 +21,19 @@ router.get(
 
       const approved = await Application.countDocuments({
         applicant: userId,
-        status: "approved",
+        status: "APPROVED",
       });
 
       const pending = await Application.countDocuments({
         applicant: userId,
         status: {
-          $in: ["submitted", "received", "under_review"],
+          $in: ["PENDING", "DOCUMENT_REQUESTED"],
         },
       });
 
       const recent = await Application.find({
         applicant: userId,
       })
-        .populate("service")
         .sort({ createdAt: -1 })
         .limit(5);
 
@@ -61,10 +60,10 @@ router.get(
       const filter = wardNo ? { assignedWard: wardNo } : {};
 
       const totalApplications = await Application.countDocuments(filter);
-      const approvedApplications = await Application.countDocuments({ ...filter, status: "approved" });
+      const approvedApplications = await Application.countDocuments({ ...filter, status: "APPROVED" });
       const pendingApplications = await Application.countDocuments({
         ...filter,
-        status: { $in: ["submitted", "received", "under_review"] }
+        status: { $in: ["PENDING", "DOCUMENT_REQUESTED"] }
       });
       const totalStaff = await User.countDocuments({ role: "ward", assignedWard: wardNo });
 
@@ -87,9 +86,9 @@ router.get(
   async (req, res) => {
     try {
       const totalApplications = await Application.countDocuments();
-      const approvedApplications = await Application.countDocuments({ status: "approved" });
+      const approvedApplications = await Application.countDocuments({ status: "APPROVED" });
       const pendingApplications = await Application.countDocuments({
-        status: { $in: ["submitted", "received", "under_review"] }
+        status: { $in: ["PENDING", "DOCUMENT_REQUESTED"] }
       });
 
       const totalWards = 32;

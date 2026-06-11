@@ -12,7 +12,7 @@ export default function DashboardCustomer() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <h1 className="text-3xl font-heading font-bold text-gray-900">
-            Welcome, {sanitize(user?.name || 'User')}
+            Welcome, {sanitize(user?.firstName || '')} {sanitize(user?.lastName || 'User')}
           </h1>
           <p className="text-gray-600 mt-1">Access municipal services and track your applications.</p>
         </div>

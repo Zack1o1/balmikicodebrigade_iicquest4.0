@@ -31,6 +31,6 @@ export const register = async (data: RegisterData) => {
 
 // JWT logout is usually frontend only
 export const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  localStorage.removeItem("iic_token");
+  localStorage.removeItem("iic_user");
 };

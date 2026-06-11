@@ -15,22 +15,19 @@ const applicationSchema = new mongoose.Schema(
     },
 
     service: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Service",
+      type: String,
       required: true,
     },
 
     status: {
       type: String,
       enum: [
-        "submitted",
-        "received",
-        "under_review",
-        "approved",
-        "rejected",
-        "ready_for_collection",
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "DOCUMENT_REQUESTED",
       ],
-      default: "submitted",
+      default: "PENDING",
     },
 
     assignedWard: {

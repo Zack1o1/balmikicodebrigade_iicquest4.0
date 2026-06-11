@@ -1,6 +1,8 @@
-import { Search, FileText, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Search, FileText, Clock, CheckCircle2, AlertCircle, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { trackApplicationById } from "../api/applicationApi";
+import { getServiceName, getServiceTime } from "../utils/serviceLookup";
+import { STATUS_LABELS, STATUS_COLORS } from "../constants/applicationStatus";
 
 export default function TrackApplication() {
   const [applicationId, setApplicationId] = useState("");
@@ -24,32 +26,24 @@ export default function TrackApplication() {
     }
   };
 
-  const getStatusDisplay = (status: string) => {
-    switch (status) {
-      case "submitted": return "Submitted";
-      case "received": return "Received";
-      case "under_review": return "Under Review";
-      case "approved": return "Approved";
-      case "rejected": return "Rejected";
-      case "ready_for_collection": return "Ready for Collection";
-      default: return status;
-    }
+  const getStatusColor = (status: string) => {
+    return STATUS_COLORS[status as keyof typeof STATUS_COLORS] || "bg-gray-100 text-gray-700";
+  };
+
+  const isStepActive = (currentStatus: string, stepStatuses: string[]) => {
+    return stepStatuses.includes(currentStatus);
   };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r  bg-[#021330] bg-gradient-to-br from-[#06183e] via-[#01255d] to-[#120a2f] py-20">
+      <section className="bg-gradient-to-br from-[#06183e] via-[#01255d] to-[#120a2f] py-20">
         <div className="max-w-5xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white">
             Track Your Application
           </h1>
-
           <p className="mt-4 text-lg text-blue-100">
             Enter your application number to check its current status.
           </p>
-
-          {/* Search Box */}
           <div className="mt-10 max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-3 flex flex-col sm:flex-row gap-3">
               <div className="flex items-center flex-1 px-4">
@@ -63,7 +57,6 @@ export default function TrackApplication() {
                   className="w-full outline-none text-gray-700"
                 />
               </div>
-
               <button
                 onClick={handleSearch}
                 disabled={loading}
@@ -93,12 +86,17 @@ export default function TrackApplication() {
                 <h2 className="text-2xl font-bold text-gray-800">
                   Application Details
                 </h2>
-                <p className="text-gray-500 mt-1">Service: <span className="font-medium text-gray-700">{application.service?.name || 'Loading...'}</span></p>
+                <p className="text-gray-500 mt-1">
+                  Service: <span className="font-medium text-gray-700">{getServiceName(application.service)}</span>
+                </p>
+                <p className="text-gray-500 mt-1">
+                  Estimated Time: <span className="font-medium text-gray-700">{getServiceTime(application.service)}</span>
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-500">Current Status</p>
-                <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 mt-1 capitalize">
-                  {getStatusDisplay(application.status)}
+                <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mt-1 ${getStatusColor(application.status)}`}>
+                  {STATUS_LABELS[application.status as keyof typeof STATUS_LABELS] || application.status}
                 </span>
               </div>
             </div>
@@ -113,7 +111,7 @@ export default function TrackApplication() {
                         <CheckCircle2 className="text-blue-500" size={20} />
                       </div>
                       <div className="bg-gray-50 rounded-lg p-4 flex-1 border border-gray-100">
-                        <p className="font-semibold text-gray-800 capitalize">{getStatusDisplay(event.status)}</p>
+                        <p className="font-semibold text-gray-800">{STATUS_LABELS[event.status as keyof typeof STATUS_LABELS] || event.status}</p>
                         <p className="text-sm text-gray-600 mt-1">{event.note || "Status updated"}</p>
                         <p className="text-xs text-gray-400 mt-2">{new Date(event.timestamp).toLocaleString()}</p>
                       </div>
@@ -123,9 +121,8 @@ export default function TrackApplication() {
               </div>
             )}
 
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Submitted */}
-              <div className={`rounded-2xl p-6 border ${['submitted', 'received', 'under_review', 'approved', 'ready_for_collection'].includes(application.status) ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+            <div className="grid md:grid-cols-4 gap-6">
+              <div className={`rounded-2xl p-6 border ${isStepActive(application.status, ['PENDING', 'APPROVED', 'REJECTED', 'DOCUMENT_REQUESTED']) ? 'bg-blue-50 border-blue-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                 <FileText className="text-blue-600 mb-4" size={36} />
                 <h3 className="font-semibold text-gray-800">Submitted</h3>
                 <p className="text-sm text-gray-500 mt-2">
@@ -133,24 +130,41 @@ export default function TrackApplication() {
                 </p>
               </div>
 
-              {/* Processing */}
-              <div className={`rounded-2xl p-6 border ${['under_review', 'approved', 'ready_for_collection'].includes(application.status) ? 'bg-yellow-50 border-yellow-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+              <div className={`rounded-2xl p-6 border ${application.status === 'PENDING' || application.status === 'DOCUMENT_REQUESTED' ? 'bg-yellow-50 border-yellow-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                 <Clock className="text-yellow-500 mb-4" size={36} />
-                <h3 className="font-semibold text-gray-800">Under Review</h3>
+                <h3 className="font-semibold text-gray-800">
+                  {application.status === 'DOCUMENT_REQUESTED' ? 'Docs Requested' : 'Pending Review'}
+                </h3>
                 <p className="text-sm text-gray-500 mt-2">
-                  Being processed
+                  {application.status === 'DOCUMENT_REQUESTED' ? 'Additional documents needed' : 'Waiting for review'}
                 </p>
               </div>
 
-              {/* Approved */}
-              <div className={`rounded-2xl p-6 border ${['approved', 'ready_for_collection'].includes(application.status) ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+              <div className={`rounded-2xl p-6 border ${application.status === 'APPROVED' ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                 <CheckCircle2 className="text-green-600 mb-4" size={36} />
                 <h3 className="font-semibold text-gray-800">Approved</h3>
                 <p className="text-sm text-gray-500 mt-2">
-                  {application.status === 'ready_for_collection' ? 'Ready for collection' : 'Approved successfully'}
+                  {application.status === 'APPROVED' ? 'Application approved' : 'Awaiting approval'}
+                </p>
+              </div>
+
+              <div className={`rounded-2xl p-6 border ${application.status === 'REJECTED' ? 'bg-red-50 border-red-100' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
+                <AlertTriangle className="text-red-600 mb-4" size={36} />
+                <h3 className="font-semibold text-gray-800">Rejected</h3>
+                <p className="text-sm text-gray-500 mt-2">
+                  {application.status === 'REJECTED' ? 'Application rejected' : 'Not rejected'}
                 </p>
               </div>
             </div>
+
+            {application.expectedCompletionDate && (
+              <div className="mt-6 p-4 bg-green-50 rounded-xl border border-green-100">
+                <p className="text-sm text-green-800">
+                  <strong>Expected Completion:</strong>{" "}
+                  {new Date(application.expectedCompletionDate).toLocaleDateString()}
+                </p>
+              </div>
+            )}
           </div>
         </section>
       )}

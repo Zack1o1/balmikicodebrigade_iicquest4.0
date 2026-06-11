@@ -16,45 +16,33 @@ import { Link, useNavigate } from "react-router-dom";
 export function LandingPage() {
   const navigate = useNavigate();
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
-  };
-
   return (
-    <div className="min-h-screen" style={{ fontFamily: "'Inter', sans-serif", background: "#F7F9FC" }}>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #003893 0%, #001F5C 60%, #1a0010 100%)" }} />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #C8102E 0%, transparent 50%), radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 40%)" }} />
+    <div className="min-h-screen bg-[#F7F9FC] font-sans">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#003893] via-[#001F5C] to-[#1a0010]">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_20%_50%,#C8102E_0%,transparent_50%),radial-gradient(circle_at_80%_20%,#ffffff_0%,transparent_40%)]" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-white/10 border border-white/20">
                 <Zap className="w-3.5 h-3.5 text-yellow-300" />
                 <span className="text-white text-xs font-medium">AI-Powered Government Services</span>
               </div>
-              <h1 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 800, fontSize: "clamp(2rem, 4vw, 3.25rem)", color: "white", lineHeight: 1.15, marginBottom: "1.25rem" }}>
+              <h1 className="font-heading font-extrabold text-white leading-tight mb-5 text-[clamp(2rem,4vw,3.25rem)]">
                 AI-Powered Citizen Services for Smart Municipalities
               </h1>
-              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.125rem", lineHeight: 1.7, marginBottom: "2rem", maxWidth: "520px" }}>
+              <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-[520px]">
                 Access ward services, check required documents, track applications, and receive updates digitally. Built for Nepal's modern municipalities.
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => handleNavigate("/services")}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold transition-all"
-                  style={{ background: "#C8102E", fontSize: "0.9375rem" }}
-                  onMouseEnter={e => (e.currentTarget.style.background = "#a50d26")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "#C8102E")}
+                  onClick={() => navigate("/services")}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold text-[0.9375rem] bg-[#C8102E] hover:bg-[#a50d26] transition-all"
                 >
                   Get Started <ArrowRight className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => handleNavigate("/track-application")}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all"
-                  style={{ background: "rgba(255,255,255,0.12)", color: "white", border: "1.5px solid rgba(255,255,255,0.3)", fontSize: "0.9375rem" }}
-                  onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")}
-                  onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
+                  onClick={() => navigate("/track-application")}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-[0.9375rem] bg-white/12 text-white border-2 border-white/30 hover:bg-white/20 transition-all"
                 >
                   Track Application
                 </button>
@@ -62,102 +50,97 @@ export function LandingPage() {
               <div className="flex items-center gap-6 mt-10">
                 {[{ v: "50+", l: "Municipalities" }, { v: "2L+", l: "Applications" }, { v: "92%", l: "Satisfaction" }].map(({ v, l }) => (
                   <div key={l}>
-                    <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "white" }}>{v}</div>
-                    <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8125rem" }}>{l}</div>
+                    <div className="font-heading font-bold text-2xl text-white">{v}</div>
+                    <div className="text-white/60 text-xs">{l}</div>
                   </div>
                 ))}
               </div>
             </div>
-            {/* Hero Illustration */}
             <div className="hidden md:block">
               <div className="relative">
-                <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(10px)" }}>
-                  <div className="p-4 border-b" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)" }}>
+                <div className="rounded-2xl overflow-hidden shadow-2xl bg-white/8 border border-white/15 backdrop-blur-sm">
+                  <div className="p-4 border-b border-white/10 bg-black/20">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-red-400" />
                       <div className="w-3 h-3 rounded-full bg-yellow-400" />
                       <div className="w-3 h-3 rounded-full bg-green-400" />
-                      <span className="ml-2 text-white/60 text-xs">PalikaAI Assistant</span>
+                      <span className="ml-2 text-white/60 text-xs">Smart Palika AI Assistant</span>
                     </div>
                   </div>
                   <div className="p-6 space-y-4">
                     <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.15)" }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-white/15">
                         <Users className="w-4 h-4 text-white" />
                       </div>
-                      <div className="rounded-xl rounded-tl-none px-4 py-3" style={{ background: "rgba(255,255,255,0.12)", color: "white", fontSize: "0.875rem" }}>
+                      <div className="rounded-xl rounded-tl-none px-4 py-3 bg-white/12 text-white text-sm">
                         बसाइँसराइ गर्न के चाहिन्छ?
                       </div>
                     </div>
                     <div className="flex gap-3 flex-row-reverse">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#C8102E" }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#C8102E]">
                         <Zap className="w-4 h-4 text-white" />
                       </div>
-                      <div className="rounded-xl rounded-tr-none px-4 py-3 max-w-xs" style={{ background: "rgba(255,255,255,0.95)", color: "#1E293B", fontSize: "0.875rem" }}>
-                        <p className="font-semibold mb-2" style={{ color: "#003893" }}>Required Documents:</p>
+                      <div className="rounded-xl rounded-tr-none px-4 py-3 max-w-xs bg-white/95 text-slate-800 text-sm">
+                        <p className="font-semibold mb-2 text-[#003893]">Required Documents:</p>
                         {["Citizenship Certificate", "Migration Form", "Tax Clearance"].map((d) => (
-                          <div key={d} className="flex items-center gap-2 text-xs" style={{ color: "#1E293B", marginBottom: "4px" }}>
+                          <div key={d} className="flex items-center gap-2 text-xs text-slate-800 mb-1">
                             <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
                             {d}
                           </div>
                         ))}
-                        <div className="mt-3 pt-3 border-t" style={{ borderColor: "#E2E8F0" }}>
-                          <span style={{ color: "#64748B", fontSize: "0.75rem" }}>Processing Time: </span>
-                          <span style={{ color: "#003893", fontWeight: 600, fontSize: "0.75rem" }}>2 Days</span>
+                        <div className="mt-3 pt-3 border-t border-slate-200">
+                          <span className="text-slate-500 text-xs">Processing Time: </span>
+                          <span className="text-[#003893] font-semibold text-xs">2 Days</span>
                         </div>
                       </div>
                     </div>
                     <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.15)" }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-white/15">
                         <Users className="w-4 h-4 text-white" />
                       </div>
-                      <div className="rounded-xl rounded-tl-none px-4 py-3" style={{ background: "rgba(255,255,255,0.12)", color: "white", fontSize: "0.875rem" }}>
+                      <div className="rounded-xl rounded-tl-none px-4 py-3 bg-white/12 text-white text-sm">
                         Can I apply online?
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full opacity-20" style={{ background: "#C8102E", filter: "blur(30px)" }} />
-                <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full opacity-10" style={{ background: "#ffffff", filter: "blur(40px)" }} />
+                <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full opacity-20 bg-[#C8102E] blur-3xl" />
+                <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full opacity-10 bg-white blur-[40px]" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ background: "#EEF2FF", color: "#003893" }}>Core Features</div>
-          <h2 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2.25rem)", color: "#1E293B", marginBottom: "1rem" }}>
+          <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 bg-indigo-100 text-[#003893]">Core Features</div>
+          <h2 className="font-heading font-bold text-[clamp(1.5rem,3vw,2.25rem)] text-slate-800 mb-4">
             Everything you need for digital governance
           </h2>
-          <p style={{ color: "#64748B", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7 }}>
+          <p className="text-slate-500 max-w-[560px] mx-auto leading-relaxed">
             From AI-powered service guidance to real-time application tracking, PalikaAI modernizes every touchpoint between citizens and municipality.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { icon: MessageSquare, title: "AI Service Assistant", desc: "Get instant answers about required documents and procedures in Nepali or English.", color: "#003893", bg: "#EEF2FF", screen: "/smart-palika-ai" },
-            { icon: FileSearch, title: "Application Tracking", desc: "Track your application status in real-time with a unique Application ID.", color: "#C8102E", bg: "#FFF1F3", screen: "/track-application" },
-            { icon: LayoutDashboard, title: "Digital Clerk Dashboard", desc: "Ward staff can manage applications, review documents, and update statuses efficiently.", color: "#2E7D32", bg: "#F0FDF4", screen: "/staff" },
-            { icon: BarChart3, title: "Municipality Analytics", desc: "Executive dashboards with KPIs, ward comparisons, and performance trends.", color: "#F9A825", bg: "#FFFBEB", screen: "/admin" },
-          ].map(({ icon: Icon, title, desc, color, bg, screen }) => (
+            { icon: MessageSquare, title: "AI Service Assistant", desc: "Get instant answers about required documents and procedures in Nepali or English.", iconBg: "bg-indigo-100", iconColor: "text-[#003893]", accent: "#003893", screen: "/smart-palika-ai" },
+            { icon: FileSearch, title: "Application Tracking", desc: "Track your application status in real-time with a unique Application ID.", iconBg: "bg-red-50", iconColor: "text-[#C8102E]", accent: "#C8102E", screen: "/track-application" },
+            { icon: LayoutDashboard, title: "Digital Clerk Dashboard", desc: "Ward staff can manage applications, review documents, and update statuses efficiently.", iconBg: "bg-green-50", iconColor: "text-green-700", accent: "#2E7D32", screen: "/staff" },
+            { icon: BarChart3, title: "Municipality Analytics", desc: "Executive dashboards with KPIs, ward comparisons, and performance trends.", iconBg: "bg-yellow-50", iconColor: "text-yellow-700", accent: "#F9A825", screen: "/admin" },
+          ].map(({ icon: Icon, title, desc, iconBg, iconColor, screen }) => (
             <button
               key={title}
-              onClick={() => handleNavigate(screen)}
-              className="text-left p-6 rounded-2xl bg-white border transition-all group"
-              style={{ borderColor: "#E2E8F0" }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 8px 24px ${color}20`; e.currentTarget.style.transform = "translateY(-2px)"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
+              onClick={() => navigate(screen)}
+              className="text-left p-6 rounded-2xl bg-white border border-slate-200 transition-all hover:-translate-y-0.5 group hover:shadow-lg"
             >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: bg }}>
-                <Icon className="w-6 h-6" style={{ color }} />
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${iconBg}`}>
+                <Icon className={`w-6 h-6 ${iconColor}`} />
               </div>
-              <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, color: "#1E293B", marginBottom: "0.5rem" }}>{title}</h3>
-              <p style={{ color: "#64748B", fontSize: "0.875rem", lineHeight: 1.6 }}>{desc}</p>
-              <div className="flex items-center gap-1 mt-4" style={{ color }}>
-                <span style={{ fontSize: "0.8125rem", fontWeight: 600 }}>Learn more</span>
+              <h3 className="font-heading font-semibold text-slate-800 mb-2">{title}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
+              <div className="flex items-center gap-1 mt-4 text-slate-500">
+                <span className="text-xs font-semibold">Learn more</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
             </button>
@@ -165,14 +148,13 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Impact Statistics */}
-      <section style={{ background: "linear-gradient(135deg, #003893 0%, #001F5C 100%)" }} className="py-20">
+      <section className="py-20 bg-gradient-to-br from-[#003893] to-[#001F5C]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2.25rem)", color: "white", marginBottom: "0.75rem" }}>
+            <h2 className="font-heading font-bold text-[clamp(1.5rem,3vw,2.25rem)] text-white mb-3">
               Transforming Public Service Delivery
             </h2>
-            <p style={{ color: "rgba(255,255,255,0.7)", maxWidth: "480px", margin: "0 auto" }}>Real impact across municipalities in Nepal</p>
+            <p className="text-white/70 max-w-[480px] mx-auto">Real impact across municipalities in Nepal</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-8">
             {[
@@ -180,24 +162,23 @@ export function LandingPage() {
               { icon: Users, value: "60%", label: "Reduced Office Visits", desc: "Citizens complete applications digitally without visiting the ward" },
               { icon: Shield, value: "92%", label: "Improved Transparency", desc: "Citizens can track every step of their application in real-time" },
             ].map(({ icon: Icon, value, label, desc }) => (
-              <div key={label} className="text-center p-8 rounded-2xl" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "rgba(200,16,46,0.2)", border: "1px solid rgba(200,16,46,0.3)" }}>
-                  <Icon className="w-7 h-7" style={{ color: "#ff6b81" }} />
+              <div key={label} className="text-center p-8 rounded-2xl bg-white/8 border border-white/12">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 bg-[rgba(200,16,46,0.2)] border border-[rgba(200,16,46,0.3)]">
+                  <Icon className="w-7 h-7 text-[#ff6b81]" />
                 </div>
-                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 800, fontSize: "2.5rem", color: "white", lineHeight: 1 }}>{value}</div>
-                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: "1rem", color: "rgba(255,255,255,0.9)", margin: "0.5rem 0 0.75rem" }}>{label}</div>
-                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.6 }}>{desc}</p>
+                <div className="font-heading font-extrabold text-[2.5rem] text-white leading-none">{value}</div>
+                <div className="font-heading font-semibold text-base text-white/90 my-2">{label}</div>
+                <p className="text-white/60 text-sm leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services Quick Access */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ background: "#FFF1F3", color: "#C8102E" }}>Popular Services</div>
-          <h2 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2.25rem)", color: "#1E293B" }}>
+          <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 bg-red-50 text-[#C8102E]">Popular Services</div>
+          <h2 className="font-heading font-bold text-[clamp(1.5rem,3vw,2.25rem)] text-slate-800">
             Access government services instantly
           </h2>
         </div>
@@ -214,15 +195,11 @@ export function LandingPage() {
           ].map(({ name, time, id }) => (
             <button
               key={name}
-              onClick={() => handleNavigate(`/apply/${id}`)}
-              className="p-4 rounded-xl bg-white border text-left transition-all"
-              style={{ borderColor: "#E2E8F0" }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "#003893"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,56,147,0.12)"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.boxShadow = "none"; }}
+              onClick={() => navigate(`/apply/${id}`)}
+              className="p-4 rounded-xl bg-white border border-slate-200 text-left transition-all hover:border-[#003893] hover:shadow-[0_4px_16px_rgba(0,56,147,0.12)]"
             >
-
-              <div style={{ fontWeight: 600, color: "#1E293B", fontSize: "0.875rem", marginBottom: "0.25rem" }}>{name}</div>
-              <div className="flex items-center gap-1" style={{ color: "#64748B", fontSize: "0.75rem" }}>
+              <div className="font-semibold text-slate-800 text-sm mb-1">{name}</div>
+              <div className="flex items-center gap-1 text-slate-500 text-xs">
                 <Clock className="w-3 h-3" />
                 {time}
               </div>
@@ -230,12 +207,15 @@ export function LandingPage() {
           ))}
         </div>
         <div className="text-center mt-8">
-          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold" style={{ background: "#003893", color: "white" }}>
-           <Link to="/services"> View All Services </Link><ArrowRight className="w-4 h-4" />
-          </button>
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-[#003893] text-white hover:bg-[#002a6e] transition-colors"
+          >
+            View All Services <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
     </div>
   );
 }
-export default LandingPage; 
+export default LandingPage;

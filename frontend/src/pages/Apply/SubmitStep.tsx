@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { Service } from '../../data/services';
 import ESEWA from '../../config/esewa';
+import { createApplication } from '../../api/applicationApi';
 
 interface PIResult {
   nameEn: string;
@@ -20,52 +21,55 @@ interface Props {
   onBack: () => void;
 }
 
-function generateTrackingId() {
-  const t = Date.now().toString(36).toUpperCase();
-  const r = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `IIC-${t}-${r}`;
-}
-
 export default function SubmitStep({ service, piData, files, onSubmit, onBack }: Props) {
   const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [paying, setPaying] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [error, setError] = useState('');
   const needsPayment = !!service.fee && service.fee.toLowerCase() !== 'free';
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     if (!accepted || submitting) return;
     if (needsPayment && !paid) return;
     setSubmitting(true);
-    const trackingId = generateTrackingId();
-    const payload = {
-      id: trackingId,
-      serviceId: service.id,
-      serviceName: service.name,
-      applicant: piData,
-      files: files.map((f) => ({ name: f.name, size: f.size })),
-      submittedAt: new Date().toISOString(),
-    };
+    setError('');
 
     try {
-      const raw = localStorage.getItem('iic_applications');
-      const arr = raw ? JSON.parse(raw) : [];
-      arr.push(payload);
-      localStorage.setItem('iic_applications', JSON.stringify(arr));
-    } catch {
-      /* localStorage not available */
-    }
+      const payload = {
+        service: service.id,
+        applicantName: piData?.nameEn || '',
+        applicantNameNp: piData?.nameNp || '',
+        dob: piData?.dob || '',
+        phone: piData?.phone || '',
+        email: piData?.email || '',
+        ward: piData?.ward || '',
+        address: piData?.address || '',
+        documents: files.map((f) => ({ name: f.name, fileUrl: '' })),
+        formData: piData,
+      };
 
-    setTimeout(() => {
+      const result = await createApplication(payload);
+
+      try {
+        const raw = localStorage.getItem('iic_applications');
+        const arr = raw ? JSON.parse(raw) : [];
+        arr.push(result);
+        localStorage.setItem('iic_applications', JSON.stringify(arr));
+      } catch { }
+
+      onSubmit(result);
+    } catch (err: any) {
+      setError(err?.response?.data?.message || err.message || 'Submission failed');
+    } finally {
       setSubmitting(false);
-      onSubmit(payload);
-    }, 400);
+    }
   }, [accepted, submitting, needsPayment, paid, service, piData, files, onSubmit]);
 
   const handlePayWithEsewa = useCallback(() => {
     if (paying) return;
     setPaying(true);
-    const pid = generateTrackingId();
+    const pid = `PAY-${Date.now().toString(36).toUpperCase()}`;
     const amountRaw = String(service.fee || '').replace(/[^0-9.]/g, '') || '0';
     const url = `${window.location.origin}/esewa-mock?amount=${encodeURIComponent(amountRaw)}&pid=${encodeURIComponent(pid)}&merchant=${encodeURIComponent(ESEWA.merchantId)}`;
     const w = window.open(url, 'esewa', 'width=480,height=700');
@@ -77,13 +81,13 @@ export default function SubmitStep({ service, piData, files, onSubmit, onBack }:
         setPaid(true);
         setPaying(false);
         window.removeEventListener('message', handler);
-        try { w?.close(); } catch { /* ignore */ }
+        try { w?.close(); } catch { }
       }
       if (d?.type === 'esewa-fail') {
         setPaid(false);
         setPaying(false);
         window.removeEventListener('message', handler);
-        try { w?.close(); } catch { /* ignore */ }
+        try { w?.close(); } catch { }
       }
     };
 
@@ -105,8 +109,12 @@ export default function SubmitStep({ service, piData, files, onSubmit, onBack }:
         <label htmlFor="agree" className="text-sm text-gray-700">I agree to the declaration</label>
       </div>
 
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>
+      )}
+
       <div className="flex items-center justify-between gap-4">
-        <button onClick={onBack} className="py-2 px-4 rounded border">Back</button>
+        <button onClick={onBack} disabled={submitting} className="py-2 px-4 rounded border">Back</button>
         <div className="flex items-center gap-3">
           {needsPayment && (
             <div className="flex items-center gap-2">
@@ -116,7 +124,11 @@ export default function SubmitStep({ service, piData, files, onSubmit, onBack }:
             </div>
           )}
 
-          <button onClick={handleSubmit} disabled={!accepted || submitting || (needsPayment && !paid)} className={`py-2 px-4 rounded ${accepted ? 'bg-primary-red text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}`}>
+          <button
+            onClick={handleSubmit}
+            disabled={!accepted || submitting || (needsPayment && !paid)}
+            className={`py-2 px-4 rounded ${(accepted && !submitting) ? 'bg-primary-red text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}`}
+          >
             {submitting ? 'Submitting...' : 'Submit Application'}
           </button>
         </div>

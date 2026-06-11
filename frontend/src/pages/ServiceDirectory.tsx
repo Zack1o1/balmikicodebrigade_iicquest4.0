@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Clock, ArrowRight, Star, FileText, IndianRupee } from "lucide-react";
+import { Search, Clock, Star, FileText, IndianRupee } from "lucide-react";
 import SERVICES from "../data/services";
 
 const ServiceDirectory = () => {
@@ -18,12 +18,6 @@ const ServiceDirectory = () => {
     const matchesCategory = activeCategory === "All" || service.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
-
-const CheckAuthentication = () => {
-  const token = localStorage.getItem('token');
-  return !!token;
-}
-
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -140,9 +134,6 @@ const CheckAuthentication = () => {
                       </span>
                       <Link to={`/apply/${service.id}`} className="text-white bg-primary-red px-4 py-2 rounded-lg font-medium text-sm inline-flex items-center gap-1 hover:bg-opacity-90">
                         Apply Now
-
-                        {/* Todo Check user authentication. If not authenticated, redirect to login page. If authenticated, go to apply page. */}
-                      {/* {CheckAuthentication() == false ? <Link to="/login">Login to Apply</Link> : <Link to={`/apply/${service.id}`}>Apply Now</Link>} */}
                       </Link>
                     </div>
                   </div>

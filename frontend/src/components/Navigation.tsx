@@ -37,22 +37,20 @@ export default function Navigation() {
   const dashboardPath = user ? ROLE_DASHBOARD[user.role] || "/" : "/";
 
   return (
-    <nav className="bg-white shadow-sm border-b border-border-soft sticky top-0 z-50">
+    <nav className="bg-white my-6 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
 
-          {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2">
               <img
                 src={logoSrc}
                 alt="Smart Palika Logo"
-                className="w-24 h-16"
+                className="w-16 h-16 object-contain"
               />
             </Link>
           </div>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             {NAV_LINKS.map((link) => (
               <Link
@@ -101,8 +99,7 @@ export default function Navigation() {
             )}
           </div>
 
-          {/* Mobile Toggle */}
-          <div className="flex items-center  md:hidden">
+          <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-text-secondary hover:text-text-primary"
@@ -114,7 +111,6 @@ export default function Navigation() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white border-t border-border-soft  shadow-sm">
           <div className="px-3 py-3 space-y-1">

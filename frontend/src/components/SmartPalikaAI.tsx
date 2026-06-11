@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
 interface CheckboxItem {
@@ -24,24 +24,20 @@ export default function PalikaChat() {
   ]);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null); // State for the warning banner
+  const [authError, setAuthError] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Helper utility to show banner, clear token, and delay redirect
   const handleAuthFailure = (errorMessage: string) => {
     setAuthError(errorMessage);
-    localStorage.removeItem("token");
+    localStorage.removeItem("iic_token");
     setIsThinking(false);
-    
-    // 3-second delay allows the user to read the banner before redirecting
     setTimeout(() => {
       window.location.href = "/login";
     }, 3000);
   };
 
-  // Initial Authentication Guard on component mount
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("iic_token");
     if (!token) {
       handleAuthFailure("Not authorized: No session token found. Redirecting to login page...");
     }
@@ -75,9 +71,9 @@ export default function PalikaChat() {
 
   const handleSend = async (messageText: string) => {
     if (!messageText.trim()) return;
-    if (authError) return; // Prevent action if already redirecting
+    if (authError) return;
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("iic_token");
     if (!token) {
       handleAuthFailure("Not authorized: Session missing. Redirecting to login page...");
       return;
@@ -98,7 +94,6 @@ export default function PalikaChat() {
         body: JSON.stringify({ message: messageText }),
       });
 
-      // Intercept expired or blocked credentials from server side
       if (response.status === 401 || response.status === 403) {
         handleAuthFailure("Not authorized: Access denied by server. Redirecting to login page...");
         return;
@@ -157,9 +152,8 @@ export default function PalikaChat() {
   };
 
   return (
-    <div className="flex flex-col h-[650px] max-w-2xl mx-auto border border-slate-200 bg-slate-50 rounded-2xl shadow-md overflow-hidden relative">
+    <div className="flex my-16 flex-col h-[650px] max-w-2xl mx-auto border border-slate-200 bg-slate-50 rounded-2xl shadow-md overflow-hidden relative">
       
-      {/* Header */}
       <div className="bg-blue-600 p-4 text-white flex justify-between items-center z-10">
         <div>
           <h2 className="font-bold text-lg flex items-center gap-2">Smart Palika AI</h2>
@@ -170,14 +164,12 @@ export default function PalikaChat() {
         </span>
       </div>
 
-      {/* Dynamic Authorization Alert Banner */}
       {authError && (
         <div className="bg-red-600 text-white text-xs font-semibold px-4 py-3 text-center shadow-md animate-pulse z-20">
           {authError}
         </div>
       )}
 
-      {/* Message Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}>
@@ -188,7 +180,6 @@ export default function PalikaChat() {
             }`}>
               <ReactMarkdown>{msg.text}</ReactMarkdown>
 
-              {/* Checklist Blocks */}
               {msg.checklist && (
                 <div className="mt-3 pt-3 border-t border-slate-100 space-y-2 bg-slate-50 p-3 rounded-xl">
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">
@@ -221,21 +212,19 @@ export default function PalikaChat() {
           </div>
         ))}
 
-        {/* Thinking Indicator */}
         {isThinking && (
           <div className="flex justify-start">
             <div className="bg-white border border-slate-200 text-slate-500 py-3 px-4 rounded-2xl rounded-tl-none shadow-xs text-sm flex items-center space-x-1.5">
               <span className="font-medium text-xs text-slate-400 animate-pulse">Consulting legal dataset</span>
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:0ms]"></div>
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:150ms]"></div>
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:300ms]"></div>
             </div>
           </div>
         )}
         <div ref={chatEndRef} />
       </div>
 
-      {/* Suggested Questions Selection */}
       <div className="p-3 bg-white border-t border-slate-100 max-h-[105px] overflow-y-auto">
         <p className="text-[10px] text-slate-400 font-bold mb-1.5 uppercase tracking-wider">Quick Search Suggestions:</p>
         <div className="flex flex-wrap gap-1.5">
@@ -252,7 +241,6 @@ export default function PalikaChat() {
         </div>
       </div>
 
-      {/* Inputs Form */}
       <form
         onSubmit={(e) => { e.preventDefault(); handleSend(input); }}
         className="p-3 bg-white border-t border-slate-200 flex space-x-2"

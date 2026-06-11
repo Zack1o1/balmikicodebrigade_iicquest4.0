@@ -25,13 +25,22 @@ export const trackApplicationById = async (applicationId: string) => {
   return res.data;
 };
 
-export const updateApplicationStatus = async (
-  id: string,
-  status: string
-) => {
-  const res = await api.put(`/applications/${id}/status`, {
-    status,
-  });
+export const updateApplicationStatus = async (id: string, status: string, note?: string) => {
+  const res = await api.put(`/applications/${id}/status`, { status, note });
+  return res.data;
+};
 
+export const approveApplication = async (id: string, note?: string) => {
+  const res = await api.put(`/applications/${id}/approve`, { note });
+  return res.data;
+};
+
+export const rejectApplication = async (id: string, note?: string) => {
+  const res = await api.put(`/applications/${id}/reject`, { note });
+  return res.data;
+};
+
+export const requestMissingDocuments = async (id: string, missingDocs: string[], note?: string) => {
+  const res = await api.put(`/applications/${id}/request-documents`, { missingDocs, note });
   return res.data;
 };

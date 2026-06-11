@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
-// Get all users
 exports.getUsers = async (req, res) => {
   try {
     const filters = {};
@@ -16,7 +15,6 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// Create user (Admin creating staff usually)
 exports.createUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password, phoneNumber, role, assignedWard } = req.body;
@@ -44,7 +42,6 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// Get user by id
 exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
@@ -63,7 +60,6 @@ exports.getUser = async (req, res) => {
   }
 };
 
-// Delete user
 exports.deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);

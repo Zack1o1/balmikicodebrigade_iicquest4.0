@@ -1,6 +1,5 @@
 const Service = require("../models/Service");
 
-// Get all services
 exports.getServices = async (req, res) => {
   try {
     const services = await Service.find();
@@ -13,7 +12,6 @@ exports.getServices = async (req, res) => {
   }
 };
 
-// Get service by id
 exports.getService = async (req, res) => {
   try {
     const service = await Service.findById(req.params.id);
@@ -31,7 +29,6 @@ exports.getService = async (req, res) => {
   }
 };
 
-// Create service
 exports.createService = async (req, res) => {
   try {
     const service = await Service.create(req.body);
@@ -44,7 +41,6 @@ exports.createService = async (req, res) => {
   }
 };
 
-// Update service
 exports.updateService = async (req, res) => {
   try {
     const service = await Service.findByIdAndUpdate(
@@ -61,7 +57,6 @@ exports.updateService = async (req, res) => {
   }
 };
 
-// Delete service
 exports.deleteService = async (req, res) => {
   try {
     await Service.findByIdAndDelete(req.params.id);

@@ -5,7 +5,6 @@ const authMiddleware = async (req, res, next) => {
   try {
     let token;
 
-    // Bearer TOKEN
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
@@ -20,13 +19,11 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // Verify JWT
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
 
-    // Get current user
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {

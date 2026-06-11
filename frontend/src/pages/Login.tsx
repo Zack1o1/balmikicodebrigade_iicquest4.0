@@ -18,9 +18,6 @@ export default function Login() {
 
   useEffect(() => {
     if (token && user) {
-      // PERSISTING TOKEN: Ensures the axios wrapper can grab it on dashboard refresh
-      localStorage.setItem("token", token);
-
       switch (user.role) {
         case "admin":
           navigate("/admin", { replace: true });

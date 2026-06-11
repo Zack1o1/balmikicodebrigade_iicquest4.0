@@ -1,46 +1,24 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { registerUser } from "../store/authSlice";
-import type { AppDispatch, RootState } from "../store";
-import { MoveLeft, Eye, EyeOff, User, Mail, Phone, Lock } from "lucide-react";
+import api from "../api/api";
+import { MoveLeft, Eye, EyeOff, User, Mail, Phone, Lock, CheckCircle } from "lucide-react";
 
 export default function Signup() {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
-  const { user, token, loading: _loading, error: serverError } = useSelector(
-    (state: RootState) => state.auth
-  );
 
   const [loading, setLoading] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState(""); // Though API uses name,email,pass,role - adding phone as part of real form
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  // Validation
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  useEffect(() => {
-    if (token && user) {
-      switch (user.role) {
-        case "admin":
-          navigate("/admin", { replace: true });
-          break;
-        case "ward":
-          navigate("/staff", { replace: true });
-          break;
-        default:
-          navigate("/dashboard", { replace: true });
-      }
-    }
-  }, [token, user, navigate]);
+  const [serverError, setServerError] = useState("");
+  const [successModal, setSuccessModal] = useState(false);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -67,26 +45,49 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setLoading(true);
-    await dispatch(
-      registerUser({
+    setServerError("");
+    try {
+      await api.post("/auth/register", {
         firstName,
         lastName,
         email,
         phoneNumber,
         password,
         role: "citizen",
-      })
-    );
-    setLoading(false);
+      });
+      setSuccessModal(true);
+    } catch (err: any) {
+      setServerError(err?.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (successModal) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
+          <div className="flex justify-center mb-4">
+            <CheckCircle className="text-green-500" size={64} />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h2>
+          <p className="text-gray-600 mb-6">Your account has been created. You can now log in to access municipal services.</p>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-primary-red text-white px-8 py-3 rounded-lg font-medium hover:bg-red-700 transition"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      {/* Header and Back Link */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
         <Link 
           to="/login" 
@@ -110,7 +111,6 @@ export default function Signup() {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-100">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 gap-y-5 sm:grid-cols-2 sm:gap-x-4">
-              {/* First Name */}
               <div>
                 <label className="block text-sm font-medium text-primary-blue">First Name <span className="text-red-500">*</span></label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -133,7 +133,6 @@ export default function Signup() {
                 {errors.firstName && <p className="mt-1.5 text-sm text-red-600">{errors.firstName}</p>}
               </div>
 
-              {/* Last Name */}
               <div>
                 <label className="block text-sm font-medium text-primary-blue">Last Name <span className="text-red-500">*</span></label>
                 <div className="mt-1 relative rounded-md shadow-sm">
@@ -157,7 +156,6 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-primary-blue">Email Address <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -180,7 +178,6 @@ export default function Signup() {
               {errors.email && <p className="mt-1.5 text-sm text-red-600">{errors.email}</p>}
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-sm font-medium text-primary-blue">Phone Number <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -203,7 +200,6 @@ export default function Signup() {
               {errors.phoneNumber && <p className="mt-1.5 text-sm text-red-600">{errors.phoneNumber}</p>}
             </div>
                   
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-primary-blue">Password <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -235,7 +231,6 @@ export default function Signup() {
               {errors.password && <p className="mt-1.5 text-sm text-red-600">{errors.password}</p>}
             </div>
 
-            {/* Confirm Password */}
             <div>
               <label className="block text-sm font-medium text-primary-blue">Confirm Password <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -267,25 +262,19 @@ export default function Signup() {
               {errors.confirmPassword && <p className="mt-1.5 text-sm text-red-600">{errors.confirmPassword}</p>}
             </div>
 
-            {/* Server Error */}
             {serverError && (
               <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-                <div className="flex">
-                  <div className="ml-3">
-                    <p className="text-sm text-red-700">{serverError}</p>
-                  </div>
-                </div>
+                <p className="text-sm text-red-700">{serverError}</p>
               </div>
             )}
 
-            {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                disabled={loading || _loading}
+                disabled={loading}
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-red hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {loading || _loading ? "Creating Account..." : "Create Account"}
+                {loading ? "Creating Account..." : "Create Account"}
               </button>
             </div>
             

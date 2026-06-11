@@ -17,7 +17,7 @@ import SmartPalikaAI from './components/SmartPalikaAI';
 const App = () => {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col font-sans">
+      <div className="min-h-screen flex flex-col bg-white font-sans">
         <Navigation />
         <main className="flex-grow">
           <Routes>
@@ -30,10 +30,10 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/dashboard" element={
-              <ProtectedRoute allowedRoles={['customer']}><DashboardCustomer /></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['citizen']}><DashboardCustomer /></ProtectedRoute>
             } />
             <Route path="/staff" element={
-              <ProtectedRoute allowedRoles={['staff']}><DashboardStaff /></ProtectedRoute>
+              <ProtectedRoute allowedRoles={['ward']}><DashboardStaff /></ProtectedRoute>
             } />
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={['admin']}><DashboardAdmin /></ProtectedRoute>

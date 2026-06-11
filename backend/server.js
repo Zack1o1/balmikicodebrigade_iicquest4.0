@@ -43,9 +43,7 @@ app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/ai", aiRoutes);
 
-// =======================
-// HEALTH CHECK
-// =======================
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -53,9 +51,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// =======================
-// DATABASE + SERVER
-// =======================
+
 async function start() {
   try {
     const mongoURI =
@@ -80,7 +76,6 @@ async function start() {
         phoneNumber: "9800000000",
         role: "admin",
       });
-      console.log("Default admin created: admin@smartpalika.com / admin123");
     }
 
     app.listen(PORT, () => {
