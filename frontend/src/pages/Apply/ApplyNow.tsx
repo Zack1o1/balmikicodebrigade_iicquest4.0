@@ -28,6 +28,20 @@ export default function ApplyNow() {
   const [piData, setPiData] = useState<PIResult | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [submittedData, setSubmittedData] = useState<Record<string, unknown> | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null); // Tracks authorization errors
+
+  // Authentication Guard: Check for valid session token on component initialization
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setAuthError("Not authorized: Please log in to access municipal application forms. Redirecting to the login page...");
+      
+      
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+    }
+  }, []);
 
   useEffect(() => {
     if (step >= 2 && step <= 4 && !piData) {
@@ -39,6 +53,8 @@ export default function ApplyNow() {
   const goPrev = () => setStep((s) => Math.max(s - 1, 0));
 
   const handleAsideNext = () => {
+    if (authError) return; // Halt navigation if unauthorized
+
     if (step === 0) {
       if (selectedService) setStep(1);
       return;
@@ -59,6 +75,7 @@ export default function ApplyNow() {
   };
 
   const asideCanProceed = (() => {
+    if (authError) return false;
     if (step === 0) return !!selectedService;
     if (step === 1) return !!piData;
     if (step === 2) return files.length >= (selectedService?.docs || 0);
@@ -66,16 +83,33 @@ export default function ApplyNow() {
   })();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 py-12 relative">
+      
+      {/* Absolute Popup Banner Overlay for Unauthorized Access */}
+      {authError && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 text-center border-t-4 border-red-600">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Please Login</h3>
+            <p className="text-sm text-gray-600 mb-4">{authError}</p>
+            <div className="flex justify-center items-center space-x-1">
+              <span className="w-2 h-2 bg-red-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+              <span className="w-2 h-2 bg-red-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+              <span className="w-2 h-2 bg-red-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className={`max-w-7xl mx-auto px-4 ${authError ? 'blur-xs pointer-events-none select-none' : ''}`}>
         <div className="mb-6">
           <h1 className="text-3xl font-bold">Submit Application</h1>
         </div>
 
+        {/* Steps Progress Header */}
         <div className="bg-white rounded-xl shadow p-6 mb-8">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 overflow-x-auto pb-2">
             {STEPS.map((label, idx) => (
-              <div key={label} className="flex items-center gap-3">
+              <div key={label} className="flex items-center gap-3 shrink-0">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${idx === step ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-600'}`}>
                   {idx + 1}
                 </div>
@@ -87,6 +121,7 @@ export default function ApplyNow() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
+          {/* Main Workspace Panels */}
           <div className="md:col-span-2 space-y-6">
             {step === 0 && (
               <div className="bg-white rounded-xl shadow p-6">
@@ -96,7 +131,8 @@ export default function ApplyNow() {
                     <button
                       key={s.id}
                       onClick={() => { setSelectedService(s); setStep(1); }}
-                      className={`w-full text-left p-4 rounded-lg border ${selectedService?.id === s.id ? 'border-primary-red bg-primary-red/10' : 'border-gray-100 bg-white'} flex items-center justify-between`}
+                      disabled={!!authError}
+                      className={`w-full text-left p-4 rounded-lg border ${selectedService?.id === s.id ? 'border-primary-red bg-primary-red/10' : 'border-gray-100 bg-white'} flex items-center justify-between transition`}
                     >
                       <div>
                         <div className="font-medium">{s.name}</div>
@@ -136,7 +172,8 @@ export default function ApplyNow() {
             </div>
           </div>
 
-          <aside className="bg-white rounded-xl shadow p-6">
+          {/* Right Sidebar Widget Summary Panel */}
+          <aside className="bg-white rounded-xl shadow p-6 h-fit">
             <h3 className="font-semibold mb-4">Application Summary</h3>
             <div className="space-y-3 text-sm text-gray-700">
               <div>
@@ -154,11 +191,11 @@ export default function ApplyNow() {
             </div>
 
             <div className="mt-6 flex gap-2">
-              <button onClick={goPrev} className="flex-1 py-2 px-3 rounded border">Back</button>
+              <button onClick={goPrev} disabled={!!authError} className="flex-1 py-2 px-3 rounded border disabled:opacity-50">Back</button>
               <button
                 onClick={handleAsideNext}
                 disabled={!asideCanProceed}
-                className={`flex-1 py-2 px-3 rounded ${asideCanProceed ? 'bg-primary-red text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}`}
+                className={`flex-1 py-2 px-3 rounded transition ${asideCanProceed ? 'bg-primary-red text-white cursor-pointer' : 'bg-gray-200 text-gray-500 cursor-not-allowed'}`}
               >
                 Next
               </button>

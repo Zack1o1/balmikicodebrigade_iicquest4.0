@@ -33,6 +33,22 @@ exports.getMyApplications = async (req, res) => {
   }
 };
 
+// Get all applications (for staff/admin)
+exports.getAllApplications = async (req, res) => {
+  try {
+    const applications = await Application.find()
+      .populate("applicant")
+      .populate("service")
+      .sort("-createdAt");
+    
+    res.json(applications);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // Application details
 exports.getApplication = async (req, res) => {
   try {
@@ -41,6 +57,26 @@ exports.getApplication = async (req, res) => {
     )
       .populate("applicant")
       .populate("service");
+
+    if (!application)
+      return res.status(404).json({
+        message: "Application not found",
+      });
+
+    res.json(application);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// Track application publicly
+exports.trackApplication = async (req, res) => {
+  try {
+    const application = await Application.findOne({
+      applicationId: req.params.applicationId
+    }).populate("service");
 
     if (!application)
       return res.status(404).json({

@@ -12,6 +12,7 @@ import DashboardAdmin from './pages/DashboardAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 import TrackApplication from './pages/TrackApplication';
 import SignUp from './pages/Signup';
+import SmartPalikaAI from './components/SmartPalikaAI';
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/services" element={<ServiceDirectory />} />
             <Route path="/track-application" element={<TrackApplication />} />
+            <Route path="/smart-palika-ai" element={<SmartPalikaAI />} />
             <Route path="/apply/:id" element={<ApplyNow />} />
             <Route path="/esewa-mock" element={<EsewaMock />} />
             <Route path="/login" element={<Login />} />

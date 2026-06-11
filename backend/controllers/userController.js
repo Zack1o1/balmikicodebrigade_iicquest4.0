@@ -1,15 +1,46 @@
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 
 // Get all users
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password");
+    const filters = {};
+    if (req.query.role) filters.role = req.query.role;
+    const users = await User.find(filters).select("-password").sort({ createdAt: -1 });
 
     res.json(users);
   } catch (error) {
     res.status(500).json({
       message: error.message,
     });
+  }
+};
+
+// Create user (Admin creating staff usually)
+exports.createUser = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, phoneNumber, role, assignedWard } = req.body;
+
+    const existingUser = await User.findOne({ $or: [{ email }, { phoneNumber }] });
+    if (existingUser) return res.status(400).json({ message: "User with email or phone already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      phoneNumber,
+      role: role || "ward",
+      assignedWard
+    });
+
+    const userObj = user.toObject();
+    delete userObj.password;
+
+    res.status(201).json(userObj);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 

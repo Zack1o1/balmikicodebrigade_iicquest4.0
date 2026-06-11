@@ -11,13 +11,15 @@ import {
   ChevronRight,
   Zap,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-interface LandingPageProps {
-  onNavigate: (screen: string) => void;
-}
+export function LandingPage() {
+  const navigate = useNavigate();
 
-export function LandingPage({ onNavigate }: LandingPageProps) {
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <div className="min-h-screen" style={{ fontFamily: "'Inter', sans-serif", background: "#F7F9FC" }}>
       {/* Hero Section */}
@@ -39,7 +41,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => onNavigate("service-directory")}
+                  onClick={() => handleNavigate("/services")}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold transition-all"
                   style={{ background: "#C8102E", fontSize: "0.9375rem" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "#a50d26")}
@@ -48,7 +50,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                   Get Started <ArrowRight className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => onNavigate("tracking")}
+                  onClick={() => handleNavigate("/track-application")}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all"
                   style={{ background: "rgba(255,255,255,0.12)", color: "white", border: "1.5px solid rgba(255,255,255,0.3)", fontSize: "0.9375rem" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")}
@@ -136,14 +138,14 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { icon: MessageSquare, title: "AI Service Assistant", desc: "Get instant answers about required documents and procedures in Nepali or English.", color: "#003893", bg: "#EEF2FF", screen: "ai-assistant" },
-            { icon: FileSearch, title: "Application Tracking", desc: "Track your application status in real-time with a unique Application ID.", color: "#C8102E", bg: "#FFF1F3", screen: "tracking" },
-            { icon: LayoutDashboard, title: "Digital Clerk Dashboard", desc: "Ward staff can manage applications, review documents, and update statuses efficiently.", color: "#2E7D32", bg: "#F0FDF4", screen: "ward-dashboard" },
-            { icon: BarChart3, title: "Municipality Analytics", desc: "Executive dashboards with KPIs, ward comparisons, and performance trends.", color: "#F9A825", bg: "#FFFBEB", screen: "municipality-dashboard" },
+            { icon: MessageSquare, title: "AI Service Assistant", desc: "Get instant answers about required documents and procedures in Nepali or English.", color: "#003893", bg: "#EEF2FF", screen: "/smart-palika-ai" },
+            { icon: FileSearch, title: "Application Tracking", desc: "Track your application status in real-time with a unique Application ID.", color: "#C8102E", bg: "#FFF1F3", screen: "/track-application" },
+            { icon: LayoutDashboard, title: "Digital Clerk Dashboard", desc: "Ward staff can manage applications, review documents, and update statuses efficiently.", color: "#2E7D32", bg: "#F0FDF4", screen: "/staff" },
+            { icon: BarChart3, title: "Municipality Analytics", desc: "Executive dashboards with KPIs, ward comparisons, and performance trends.", color: "#F9A825", bg: "#FFFBEB", screen: "/admin" },
           ].map(({ icon: Icon, title, desc, color, bg, screen }) => (
             <button
               key={title}
-              onClick={() => onNavigate(screen)}
+              onClick={() => handleNavigate(screen)}
               className="text-left p-6 rounded-2xl bg-white border transition-all group"
               style={{ borderColor: "#E2E8F0" }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 8px 24px ${color}20`; e.currentTarget.style.transform = "translateY(-2px)"; }}
@@ -201,18 +203,18 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
-            { name: "Birth Registration", time: "3 days" },
-            { name: "Death Registration", time: "2 days" },
-            { name: "Migration Certificate", time: "2 days" },
-            { name: "Residence Verification", time: "1 day" },
-            { name: "House Recommendation", time: "5 days" },
-            { name: "Business Recommendation", time: "7 days" },
-            { name: "Citizenship Recommendation", time: "3 days" },
-            { name: "Tax Clearance",  time: "4 days" },
-          ].map(({ name, time }) => (
+            { name: "Birth Registration", time: "3 days", id: "birth" },
+            { name: "Death Registration", time: "2 days", id: "death" },
+            { name: "Migration Certificate", time: "2 days", id: "migration" },
+            { name: "Residence Verification", time: "1 day", id: "residence" },
+            { name: "House Recommendation", time: "5 days", id: "house" },
+            { name: "Business Recommendation", time: "7 days", id: "business" },
+            { name: "Citizenship Recommendation", time: "3 days", id: "citizenship" },
+            { name: "Income Certificate",  time: "2 days", id: "income" },
+          ].map(({ name, time, id }) => (
             <button
               key={name}
-              onClick={() => onNavigate("service-directory")}
+              onClick={() => handleNavigate(`/apply/${id}`)}
               className="p-4 rounded-xl bg-white border text-left transition-all"
               style={{ borderColor: "#E2E8F0" }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = "#003893"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,56,147,0.12)"; }}

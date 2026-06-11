@@ -48,40 +48,40 @@ export default function ApplicationSubmission({ onNext }: Props) {
     <div className="bg-white rounded-xl shadow p-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold">Personal Information</h3>
-        <div className="text-sm text-red-600">* Required fields</div>
+        
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-gray-700">Full Name (English)</label>
+          <label className="block text-sm text-gray-700">Full Name (English)<span className="text-sm text-red-600">*</span></label>
           <input value={nameEn} onChange={e => setNameEn(e.target.value)} className="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
-          <label className="block text-sm text-gray-700">Full Name (Nepali)</label>
+          <label className="block text-sm text-gray-700">Full Name (Nepali)<span className="text-sm text-red-600">*</span></label>
           <input value={nameNp} onChange={e => setNameNp(e.target.value)} className="w-full mt-1 p-2 border rounded" />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-700">Date of Birth</label>
+          <label className="block text-sm text-gray-700">Date of Birth<span className="text-sm text-red-600">*</span></label>
           <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
-          <label className="block text-sm text-gray-700">Phone Number</label>
+          <label className="block text-sm text-gray-700">Phone Number<span className="text-sm text-red-600">*</span></label>
           <input value={phone} onChange={e => setPhone(e.target.value)} className="w-full mt-1 p-2 border rounded" />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-700">Email Address</label>
+          <label className="block text-sm text-gray-700">Email Address<span className="text-sm text-red-600">*</span> </label>
           <input value={email} onChange={e => setEmail(e.target.value)} className="w-full mt-1 p-2 border rounded" />
         </div>
         <div>
-          <label className="block text-sm text-gray-700">Ward Number</label>
+          <label className="block text-sm text-gray-700">Ward Number<span className="text-sm text-red-600">*</span></label>
           <select value={ward} onChange={e => setWard(e.target.value)} className="w-full mt-1 p-2 border rounded">
             {WARDS.map(w => <option key={w} value={w}>{w}</option>)}
           </select>
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm text-gray-700">Permanent Address</label>
+          <label className="block text-sm text-gray-700">Permanent Address<span className="text-sm text-red-600">*</span></label>
           <input value={address} onChange={e => setAddress(e.target.value)} className="w-full mt-1 p-2 border rounded" />
         </div>
       </div>

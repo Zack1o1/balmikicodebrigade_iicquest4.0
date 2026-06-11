@@ -10,8 +10,18 @@ export const getMyApplications = async () => {
   return res.data;
 };
 
+export const getAllApplications = async () => {
+  const res = await api.get("/applications/all");
+  return res.data;
+};
+
 export const getApplication = async (id: string) => {
   const res = await api.get(`/applications/${id}`);
+  return res.data;
+};
+
+export const trackApplicationById = async (applicationId: string) => {
+  const res = await api.get(`/applications/track/${applicationId}`);
   return res.data;
 };
 

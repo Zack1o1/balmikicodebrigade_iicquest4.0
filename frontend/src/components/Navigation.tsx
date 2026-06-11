@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { name: "Home", path: "/" },
   { name: "Services", path: "/services" },
   { name: "Track Application", path: "/track-application" },
+  { name: "Smart Palika AI", path: "/smart-palika-ai" },
 ];
 
 const ROLE_DASHBOARD: Record<string, string> = {
@@ -101,7 +102,7 @@ export default function Navigation() {
           </div>
 
           {/* Mobile Toggle */}
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center  md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-text-secondary hover:text-text-primary"
@@ -115,7 +116,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-border-soft shadow-sm">
+        <div className="md:hidden bg-white border-t border-border-soft  shadow-sm">
           <div className="px-3 py-3 space-y-1">
 
             {NAV_LINKS.map((link) => (
@@ -123,7 +124,7 @@ export default function Navigation() {
                 key={link.name}
                 to={link.path}
                 onClick={() => setIsOpen(false)}
-                className="block px-3 py-3 rounded-lg text-base font-medium text-text-secondary hover:text-primary-blue hover:bg-gray-50"
+                className=" px-3 py-3 rounded-lg text-base font-medium text-text-secondary hover:text-primary-blue hover:bg-gray-50 flex items-center justify-center"
               >
                 {link.name}
               </Link>

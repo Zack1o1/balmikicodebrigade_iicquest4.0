@@ -14,7 +14,7 @@
     "dotenv": "^16.6.1",
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.0",
+    "mongoose": "^8.24.0",
     "pg": "^8.13.0",
     "postgresql": "^0.0.1",
     "psql": "^0.0.1"

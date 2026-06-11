@@ -71,11 +71,12 @@ export default function Signup() {
     if (!validateForm()) return;
 
     setLoading(true);
-    // Include phone number if your API supports it, currently using standard registration fields
     await dispatch(
       registerUser({
-        name: `${firstName} ${lastName}`.trim(),
+        firstName,
+        lastName,
         email,
+        phoneNumber,
         password,
         role: "citizen",
       })
@@ -97,10 +98,10 @@ export default function Signup() {
         <div className="flex justify-center">
            <img src="/src/assets/logo.png" alt="Smart Palika" className="h-16 w-auto" />
         </div>
-        <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900 tracking-tight">
+        <h2 className="mt-4 text-center text-3xl font-extrabold text-primary-blue tracking-tight">
           Create an Account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-primary-blue opacity-70">
           Join Smart Palika to access municipal services digitally
         </p>
       </div>
@@ -111,7 +112,7 @@ export default function Signup() {
             <div className="grid grid-cols-1 gap-y-5 sm:grid-cols-2 sm:gap-x-4">
               {/* First Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">First Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-primary-blue">First Name <span className="text-red-500">*</span></label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-5 w-5 text-gray-400" />
@@ -134,7 +135,7 @@ export default function Signup() {
 
               {/* Last Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">Last Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-primary-blue">Last Name <span className="text-red-500">*</span></label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-5 w-5 text-gray-400" />
@@ -158,7 +159,7 @@ export default function Signup() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email Address <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-primary-blue">Email Address <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
@@ -181,7 +182,7 @@ export default function Signup() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">Phone Number <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-primary-blue">Phone Number <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Phone className="h-5 w-5 text-gray-400" />
@@ -201,10 +202,10 @@ export default function Signup() {
               </div>
               {errors.phoneNumber && <p className="mt-1.5 text-sm text-red-600">{errors.phoneNumber}</p>}
             </div>
-
+                  
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">Password <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-primary-blue">Password <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -236,7 +237,7 @@ export default function Signup() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">Confirm Password <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-primary-blue">Confirm Password <span className="text-red-500">*</span></label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />

@@ -66,6 +66,23 @@ async function start() {
 
     console.log("Connected to MongoDB");
 
+    // Create default admin if not exists
+    const User = require("./models/User");
+    const bcrypt = require("bcryptjs");
+    const adminExists = await User.findOne({ role: "admin" });
+    if (!adminExists) {
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      await User.create({
+        firstName: "System",
+        lastName: "Admin",
+        email: "admin@smartpalika.com",
+        password: hashedPassword,
+        phoneNumber: "9800000000",
+        role: "admin",
+      });
+      console.log("Default admin created: admin@smartpalika.com / admin123");
+    }
+
     app.listen(PORT, () => {
       console.log(
         `Server running on http://localhost:${PORT}`
