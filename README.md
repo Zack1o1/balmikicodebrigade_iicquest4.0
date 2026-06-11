@@ -1,10 +1,29 @@
 # SmartPalika
 
 AI-Powered Citizen Services for Nepal's Municipalities.
+## Team Name
+  Balmiki Code Brigrade
+## Members
+  - Dilip Adhikari
+  - Lalit Kumar Rajbanshi
+  - Anmol Oli
+  - Bibek Bishwokrama
 
 ## Project Overview
 
 SmartPalika is a digital governance platform that modernizes the interaction between citizens and municipal governments. It provides an end-to-end workflow for submitting, tracking, and managing municipal service applications.
+
+## Problem Statement
+
+Local government service delivery in Nepal remains heavily dependent on manual processes, paper-based records, and physical office visits. Citizens frequently struggle to obtain information regarding service requirements, required documents, and application status.
+Municipal employees spend a significant portion of their time answering repetitive questions and manually processing applications.
+Studies indicate that many local governments continue to rely heavily on manual processes, requiring citizens to make physical visits to municipal offices for essential services such as vital registration, licensing, and administrative documentation. In addition, service delivery at the local level continues to be affected by insufficient human resources, weak institutional capacity, inadequate technical infrastructure, and bureaucratic inefficiencies.
+Evidence from local governments further highlights concerns regarding accessibility, timeliness, service competency, and fairness, while infrastructure and human resource limitations constrain the quality of public service delivery. Consequently, there is a growing need for integrated digital platforms that can provide accurate service information, automate routine inquiries, enable application tracking, and improve overall service efficiency and citizen satisfaction.
+
+## Solution Description
+
+Smart Palika is a web-based and mobile-accessible municipal service platform that enables citizens to access government service information, submit applications, track service status, and interact with an AI-powered assistant. Municipal staff use an administrative dashboard to manage applications, automate workflows, and monitor service performance through analytics.
+
 
 ### Customer Workflow
 1. Browse available municipal services
@@ -169,51 +188,13 @@ npm start
 
 | Role     | Email                       | Password      |
 |----------|-----------------------------|---------------|
-| Customer | ram.customer@palika.gov.np  | Password123!  |
-| Staff    | sita.staff@palika.gov.np    | Password123!  |
-| Admin    | admin@palika.gov.np         | Password123!  |
+| Customer | test.customer@gmail.com     | password123   |
+| Admin    | admin@smartalika.com        | admin123      |
+| Staff    | test.staff@smartpalika.com  | password123   |
 
 ## API Documentation
 
 Refer to [API.md](./API.md) for complete API reference.
-
-## Folder Structure
-
-```
-smartpalika/
-├── frontend/
-│   └── src/
-│       ├── api/              # API service functions
-│       ├── assets/           # Static assets (images)
-│       ├── components/       # Shared components
-│       ├── config/           # Configuration files
-│       ├── constants/        # Constants and enums
-│       ├── data/             # Static data (services)
-│       ├── hooks/            # Custom React hooks
-│       ├── pages/            # Page components
-│       │   ├── Apply/        # Application flow pages
-│       │   ├── DashboardAdmin.tsx
-│       │   ├── DashboardCustomer.tsx
-│       │   ├── DashboardStaff.tsx
-│       │   ├── LandingPage.tsx
-│       │   ├── Login.tsx
-│       │   ├── ServiceDirectory.tsx
-│       │   ├── Signup.tsx
-│       │   └── TrackApplication.tsx
-│       ├── store/            # Redux store and slices
-│       └── utils/            # Utility functions
-├── backend/
-│   ├── config/               # Database configuration
-│   ├── controllers/          # Route handlers
-│   ├── middleware/           # Auth and role middleware
-│   ├── models/              # Mongoose models
-│   └── routes/
-│       └── v1/               # API route definitions
-├── docs/                    # Documentation
-├── assets/                  # Project assets
-├── API.md                   # API documentation
-└── README.md
-```
 
 ## Security Measures
 
@@ -256,15 +237,14 @@ Users are automatically redirected to login when their JWT token expires (7 days
 ### File Upload Issues
 Check that uploaded files meet size and type requirements. Ensure the upload directory exists and is writable.
 
-## Changelog
 
-### v1.0.0
-- Initial release with core features
-- Authentication and role-based access control
-- Application submission and tracking
-- Document upload and management
-- eSewa payment integration
-- Staff review and approval workflow
-- Admin dashboard with analytics
-- AI-powered service assistant chatbot
-- Responsive TailwindCSS design
+### AI Tools Used
+
+Copilot and ChatGPT was used as a supplementary development tool for code assistance, debugging, documentation, and accelerating development. All generated outputs were reviewed, modified, and integrated by the team. AI was used as a backup aid to support faster development and productivity.
+
+<img width="1421" height="671" alt="Screenshot 2026-06-11 at 9 56 17 PM" src="https://github.com/user-attachments/assets/dd1c58b4-4797-4315-abc3-82e3734f8838" />
+<img width="1260" height="695" alt="Screenshot 2026-06-11 at 10 00 04 PM" src="https://github.com/user-attachments/assets/fcb9ae10-c0d1-4fec-8124-5cc7a5765e91" />
+<img width="1080" height="731" alt="Screenshot 2026-06-11 at 10 01 00 PM" src="https://github.com/user-attachments/assets/0ec0cfac-41f9-474e-98a8-78f68bdf7292" /><img width="1169" height="744" alt="Screenshot 2026-06-11 at 10 01 39 PM" src="https://github.com/user-attachments/assets/5ba72621-d3ac-4de0-a8ad-a106ba19f106" />
+
+
+
