@@ -2,7 +2,7 @@
 
 @import "tailwindcss";
 
-@theme {
+:root {
   --color-primary-red: #C8102E;
   --color-primary-blue: #003893;
   --color-background-soft: #F7F9FC;

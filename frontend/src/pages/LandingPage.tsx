@@ -1,134 +1,239 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, CheckCircle2, User } from 'lucide-react';
+import {
+  ArrowRight,
+  MessageSquare,
+  FileSearch,
+  LayoutDashboard,
+  BarChart3,
+  CheckCircle2,
+  Clock,
+  Users,
+  Shield,
+  ChevronRight,
+  Zap,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
-const LandingPage = () => {
-  const stats = {
-    municipalities: 50,
-    applications: 200000,
-    satisfaction: 92,
-  };
+interface LandingPageProps {
+  onNavigate: (screen: string) => void;
+}
 
+export function LandingPage({ onNavigate }: LandingPageProps) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <section className="relative bg-[#021330] bg-gradient-to-br from-[#06183e] via-[#01255d] to-[#120a2f] pt-20 pb-32 overflow-hidden">
-        <div className="absolute top-0 right-0 -mr-40 -mt-20 w-96 h-96 rounded-full bg-blue-600 opacity-20 blur-3xl" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-gray-300 text-sm mb-8">
-                <Zap size={14} className="text-[#EAB308]" />
-                <span>AI-Powered Government Services</span>
+    <div className="min-h-screen" style={{ fontFamily: "'Inter', sans-serif", background: "#F7F9FC" }}>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #003893 0%, #001F5C 60%, #1a0010 100%)" }} />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #C8102E 0%, transparent 50%), radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 40%)" }} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)" }}>
+                <Zap className="w-3.5 h-3.5 text-yellow-300" />
+                <span className="text-white text-xs font-medium">AI-Powered Government Services</span>
               </div>
-              <h1 className="text-5xl lg:text-[4rem] font-heading font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
+              <h1 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 800, fontSize: "clamp(2rem, 4vw, 3.25rem)", color: "white", lineHeight: 1.15, marginBottom: "1.25rem" }}>
                 AI-Powered Citizen Services for Smart Municipalities
               </h1>
-              <p className="text-xl text-gray-300 mb-10 max-w-xl leading-relaxed">
-                Access ward services, check required documents, track applications, and receive updates digitally.
+              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.125rem", lineHeight: 1.7, marginBottom: "2rem", maxWidth: "520px" }}>
+                Access ward services, check required documents, track applications, and receive updates digitally. Built for Nepal's modern municipalities.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 mb-14">
-                <Link
-                  to="/services"
-                  className="inline-flex items-center justify-center gap-2 bg-primary-red text-white px-8 py-3.5 rounded-xl font-semibold text-lg"
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={() => onNavigate("service-directory")}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold transition-all"
+                  style={{ background: "#C8102E", fontSize: "0.9375rem" }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "#a50d26")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "#C8102E")}
                 >
-                  Get Started <ArrowRight size={20} />
-                </Link>
-                <Link
-                  to="/services"
-                  className="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/20 text-white px-8 py-3.5 rounded-xl font-semibold text-lg"
+                  Get Started <ArrowRight className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => onNavigate("tracking")}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all"
+                  style={{ background: "rgba(255,255,255,0.12)", color: "white", border: "1.5px solid rgba(255,255,255,0.3)", fontSize: "0.9375rem" }}
+                  onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")}
+                  onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
                 >
                   Track Application
-                </Link>
+                </button>
               </div>
-              <div className="flex gap-10 md:gap-16">
-                <div>
-                  <div className="text-4xl font-bold text-white mb-1">
-                    {stats.municipalities}
+              <div className="flex items-center gap-6 mt-10">
+                {[{ v: "50+", l: "Municipalities" }, { v: "2L+", l: "Applications" }, { v: "92%", l: "Satisfaction" }].map(({ v, l }) => (
+                  <div key={l}>
+                    <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "white" }}>{v}</div>
+                    <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8125rem" }}>{l}</div>
                   </div>
-                  <div className="text-sm text-gray-400">Municipalities</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-white mb-1">
-                    {stats.applications}
-                  </div>
-                  <div className="text-sm text-gray-400">Applications</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-white mb-1">
-                    {stats.satisfaction}%
-                  </div>
-                  <div className="text-sm text-gray-400">Satisfaction</div>
-                </div>
+                ))}
               </div>
             </div>
-
-            <div className="relative lg:ml-10">
-              <div className="bg-[#1B2A4E]/80 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-                <div className="bg-[#111A34]/50 border-b border-white/5 py-3 px-4 flex items-center gap-3">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                  </div>
-                  <div className="text-xs text-gray-400 font-medium ml-2">
-                    Smart Palika Assistant
-                  </div>
-                </div>
-
-                <div className="p-6 space-y-6 aspect-video max-h-[450px]">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300">
-                      <User size={20} />
-                    </div>
-                    <div className="bg-[#253966] text-gray-100 px-5 py-3 rounded-2xl rounded-tl-sm">
-                      बसाइँसराइ गर्न के चाहिन्छ?
+            {/* Hero Illustration */}
+            <div className="hidden md:block">
+              <div className="relative">
+                <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(10px)" }}>
+                  <div className="p-4 border-b" style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)" }}>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-red-400" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                      <div className="w-3 h-3 rounded-full bg-green-400" />
+                      <span className="ml-2 text-white/60 text-xs">PalikaAI Assistant</span>
                     </div>
                   </div>
-
-                  <div className="flex justify-end mr-6">
-                    <div className="bg-white rounded-2xl p-5 w-72 shadow-lg relative">
-                      <div className="absolute top-6 -right-5 w-10 h-10 bg-primary-red rounded-full flex items-center justify-center text-white">
-                        <Zap size={18} />
+                  <div className="p-6 space-y-4">
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.15)" }}>
+                        <Users className="w-4 h-4 text-white" />
                       </div>
-                      <h4 className="text-[#003893] font-bold text-sm mb-4">
-                        Required Documents:
-                      </h4>
-                      <ul className="space-y-3 mb-5">
-                        <li className="flex items-center gap-2 text-sm text-gray-700">
-                          <CheckCircle2 size={16} className="text-green-600" />
-                          Citizenship Certificate
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-700">
-                          <CheckCircle2 size={16} className="text-green-600" />
-                          Migration Form
-                        </li>
-                        <li className="flex items-center gap-2 text-sm text-gray-700">
-                          <CheckCircle2 size={16} className="text-green-600" />
-                          Tax Clearance
-                        </li>
-                      </ul>
-                      <div className="border-t border-gray-100 pt-3 flex justify-between">
-                        <span className="text-xs text-gray-500">Processing Time:</span>
-                        <span className="text-xs font-bold text-[#003893]">2 Days</span>
+                      <div className="rounded-xl rounded-tl-none px-4 py-3" style={{ background: "rgba(255,255,255,0.12)", color: "white", fontSize: "0.875rem" }}>
+                        बसाइँसराइ गर्न के चाहिन्छ?
+                      </div>
+                    </div>
+                    <div className="flex gap-3 flex-row-reverse">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#C8102E" }}>
+                        <Zap className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="rounded-xl rounded-tr-none px-4 py-3 max-w-xs" style={{ background: "rgba(255,255,255,0.95)", color: "#1E293B", fontSize: "0.875rem" }}>
+                        <p className="font-semibold mb-2" style={{ color: "#003893" }}>Required Documents:</p>
+                        {["Citizenship Certificate", "Migration Form", "Tax Clearance"].map((d) => (
+                          <div key={d} className="flex items-center gap-2 text-xs" style={{ color: "#1E293B", marginBottom: "4px" }}>
+                            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                            {d}
+                          </div>
+                        ))}
+                        <div className="mt-3 pt-3 border-t" style={{ borderColor: "#E2E8F0" }}>
+                          <span style={{ color: "#64748B", fontSize: "0.75rem" }}>Processing Time: </span>
+                          <span style={{ color: "#003893", fontWeight: 600, fontSize: "0.75rem" }}>2 Days</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(255,255,255,0.15)" }}>
+                        <Users className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="rounded-xl rounded-tl-none px-4 py-3" style={{ background: "rgba(255,255,255,0.12)", color: "white", fontSize: "0.875rem" }}>
+                        Can I apply online?
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300">
-                      <User size={20} />
-                    </div>
-                    <div className="bg-[#253966] text-gray-100 px-5 py-3 rounded-2xl rounded-tl-sm">
-                      Can I apply online?
-                    </div>
-                  </div>
                 </div>
+                <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full opacity-20" style={{ background: "#C8102E", filter: "blur(30px)" }} />
+                <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full opacity-10" style={{ background: "#ffffff", filter: "blur(40px)" }} />
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Features Section */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14">
+          <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ background: "#EEF2FF", color: "#003893" }}>Core Features</div>
+          <h2 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2.25rem)", color: "#1E293B", marginBottom: "1rem" }}>
+            Everything you need for digital governance
+          </h2>
+          <p style={{ color: "#64748B", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7 }}>
+            From AI-powered service guidance to real-time application tracking, PalikaAI modernizes every touchpoint between citizens and municipality.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { icon: MessageSquare, title: "AI Service Assistant", desc: "Get instant answers about required documents and procedures in Nepali or English.", color: "#003893", bg: "#EEF2FF", screen: "ai-assistant" },
+            { icon: FileSearch, title: "Application Tracking", desc: "Track your application status in real-time with a unique Application ID.", color: "#C8102E", bg: "#FFF1F3", screen: "tracking" },
+            { icon: LayoutDashboard, title: "Digital Clerk Dashboard", desc: "Ward staff can manage applications, review documents, and update statuses efficiently.", color: "#2E7D32", bg: "#F0FDF4", screen: "ward-dashboard" },
+            { icon: BarChart3, title: "Municipality Analytics", desc: "Executive dashboards with KPIs, ward comparisons, and performance trends.", color: "#F9A825", bg: "#FFFBEB", screen: "municipality-dashboard" },
+          ].map(({ icon: Icon, title, desc, color, bg, screen }) => (
+            <button
+              key={title}
+              onClick={() => onNavigate(screen)}
+              className="text-left p-6 rounded-2xl bg-white border transition-all group"
+              style={{ borderColor: "#E2E8F0" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 8px 24px ${color}20`; e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
+            >
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ background: bg }}>
+                <Icon className="w-6 h-6" style={{ color }} />
+              </div>
+              <h3 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, color: "#1E293B", marginBottom: "0.5rem" }}>{title}</h3>
+              <p style={{ color: "#64748B", fontSize: "0.875rem", lineHeight: 1.6 }}>{desc}</p>
+              <div className="flex items-center gap-1 mt-4" style={{ color }}>
+                <span style={{ fontSize: "0.8125rem", fontWeight: 600 }}>Learn more</span>
+                <ChevronRight className="w-4 h-4" />
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Impact Statistics */}
+      <section style={{ background: "linear-gradient(135deg, #003893 0%, #001F5C 100%)" }} className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2.25rem)", color: "white", marginBottom: "0.75rem" }}>
+              Transforming Public Service Delivery
+            </h2>
+            <p style={{ color: "rgba(255,255,255,0.7)", maxWidth: "480px", margin: "0 auto" }}>Real impact across municipalities in Nepal</p>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-8">
+            {[
+              { icon: Zap, value: "73%", label: "Faster Service Delivery", desc: "Average processing time reduced from 7 days to 1.8 days" },
+              { icon: Users, value: "60%", label: "Reduced Office Visits", desc: "Citizens complete applications digitally without visiting the ward" },
+              { icon: Shield, value: "92%", label: "Improved Transparency", desc: "Citizens can track every step of their application in real-time" },
+            ].map(({ icon: Icon, value, label, desc }) => (
+              <div key={label} className="text-center p-8 rounded-2xl" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "rgba(200,16,46,0.2)", border: "1px solid rgba(200,16,46,0.3)" }}>
+                  <Icon className="w-7 h-7" style={{ color: "#ff6b81" }} />
+                </div>
+                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 800, fontSize: "2.5rem", color: "white", lineHeight: 1 }}>{value}</div>
+                <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: "1rem", color: "rgba(255,255,255,0.9)", margin: "0.5rem 0 0.75rem" }}>{label}</div>
+                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.875rem", lineHeight: 1.6 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Quick Access */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14">
+          <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ background: "#FFF1F3", color: "#C8102E" }}>Popular Services</div>
+          <h2 style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2.25rem)", color: "#1E293B" }}>
+            Access government services instantly
+          </h2>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[
+            { name: "Birth Registration", time: "3 days" },
+            { name: "Death Registration", time: "2 days" },
+            { name: "Migration Certificate", time: "2 days" },
+            { name: "Residence Verification", time: "1 day" },
+            { name: "House Recommendation", time: "5 days" },
+            { name: "Business Recommendation", time: "7 days" },
+            { name: "Citizenship Recommendation", time: "3 days" },
+            { name: "Tax Clearance",  time: "4 days" },
+          ].map(({ name, time }) => (
+            <button
+              key={name}
+              onClick={() => onNavigate("service-directory")}
+              className="p-4 rounded-xl bg-white border text-left transition-all"
+              style={{ borderColor: "#E2E8F0" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "#003893"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,56,147,0.12)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.boxShadow = "none"; }}
+            >
+
+              <div style={{ fontWeight: 600, color: "#1E293B", fontSize: "0.875rem", marginBottom: "0.25rem" }}>{name}</div>
+              <div className="flex items-center gap-1" style={{ color: "#64748B", fontSize: "0.75rem" }}>
+                <Clock className="w-3 h-3" />
+                {time}
+              </div>
+            </button>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold" style={{ background: "#003893", color: "white" }}>
+           <Link to="/services"> View All Services </Link><ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </section>
     </div>
   );
-};
-
-export default LandingPage;
+}
+export default LandingPage; 

@@ -11,6 +11,7 @@ import DashboardStaff from './pages/DashboardStaff';
 import DashboardAdmin from './pages/DashboardAdmin';
 import ProtectedRoute from './components/ProtectedRoute';
 import TrackApplication from './pages/TrackApplication';
+import SignUp from './pages/Signup';
 
 const App = () => {
   return (
@@ -25,7 +26,7 @@ const App = () => {
             <Route path="/apply/:id" element={<ApplyNow />} />
             <Route path="/esewa-mock" element={<EsewaMock />} />
             <Route path="/login" element={<Login />} />
-
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/dashboard" element={
               <ProtectedRoute allowedRoles={['customer']}><DashboardCustomer /></ProtectedRoute>
             } />
